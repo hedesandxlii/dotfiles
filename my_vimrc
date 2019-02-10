@@ -1,0 +1,51 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim' " required
+
+" Nerdtree
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+
+" Mappings
+let mapleader = ","
+
+" vimrc
+map <Leader>sv :source ~/.vimrc<CR>
+map <Leader>ev :tabedit ~/.vimrc<CR>
+
+nnoremap j jzO
+nnoremap k kzO
+
+
+" Folds
+set foldmethod=syntax
+set foldlevel=1
+set foldclose=all
+set foldnestmax=1
+
+" Nerdtree config
+map <C-n> :NERDTreeToggle<CR>	" Toggle NerdTree with Ctrl+n
+autocmd vimenter * NERDTree	" Automatically open Nerdtree with Vim
+let NERDTRreeMinimalUI = 1
+let NERDTRreeDirArrows = 1
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
