@@ -1,43 +1,37 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
-
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-
-Plugin 'VundleVim/Vundle.vim' " required
+call plug#begin('~/.local/share/nvim/plugged')
 
 " Nerdtree
-Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
-" Autocomplete C/C++
-Plugin 'Rip-Rip/clang_complete'
+Plug 'neomake/neomake'
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()
 
+set nocompatible              " be iMproved
 
-" Mappings
+"""""""""" Mappings 
 let mapleader = ","
-
-" vimrc
-map <Leader>sv :source ~/.vimrc<CR>
-map <Leader>ev :tabedit ~/.vimrc<CR>
-
-" stoff
-set tw=99
-
-" Folds
 nnoremap j gj
 nnoremap k gk
 
+" Opens a terminal vertically with Ctrl+s(hell)
+nnoremap <C-s> :vsplit +terminal<CR>i
+
+" vimrc
+map <Leader>sv :source ~/.config/nvim/init.vim<CR>
+map <Leader>ev :tabedit ~/.config/nvim/init.vim<CR>
+
+" Formatting
+set tw=99
+
+" Folds
 set foldmethod=syntax
 set foldlevel=1
 set foldclose=all
 set foldnestmax=1
 
-" Nerdtree config
+"""""""""" Nerdtree config
 map <C-t> :NERDTreeToggle<CR>	" Toggle NerdTree with Ctrl+n
 " autocmd vimenter * NERDTree	" Automatically open Nerdtree with Vim
 let NERDTRreeMinimalUI = 1
@@ -55,5 +49,7 @@ let g:NERDTreeIndicatorMapCustom = {
     \ "Unknown"   : "?"
     \ }
 
-" clang_complete
-let g:clang_library_path='/usr/lib/llvm-7.0.1/lib'
+
+"""""""""" NEOMAKE (linter)
+" When writing a buffer (no delay).
+call neomake#configure#automake('w')
