@@ -1,10 +1,13 @@
 call plug#begin('~/.local/share/nvim/plugged')
-
 " Nerdtree
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
 Plug 'neomake/neomake'
+
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java'}
+
+Plug 'janko/vim-test'
 
 call plug#end()
 
@@ -16,14 +19,19 @@ nnoremap j gj
 nnoremap k gk
 
 " Opens a terminal vertically with Ctrl+s(hell)
-nnoremap <C-s> :vsplit +terminal<CR>i
+" nnoremap <C-s> :vsplit :terminal<CR>
 
 " vimrc
-map <Leader>sv :source ~/.config/nvim/init.vim<CR>
-map <Leader>ev :tabedit ~/.config/nvim/init.vim<CR>
+map <Leader>sv :source ~/.vimrc<CR>
+map <Leader>ev :tabedit ~/.vimrc<CR>
 
 " Formatting
 set tw=99
+
+" Tabs
+set tabstop=4
+set shiftwidth=4
+set expandtab
 
 " Folds
 set foldmethod=syntax
@@ -31,9 +39,15 @@ set foldlevel=1
 set foldclose=all
 set foldnestmax=1
 
-"""""""""" Nerdtree config
+"""""""""" Config
+"Auto-ladda filer som ändras på hårddisken.
+set autoread 
+
+"""""""""""""""""""" PLUGIN CONFIG
+" Nerdtree config
 map <C-t> :NERDTreeToggle<CR>	" Toggle NerdTree with Ctrl+n
 " autocmd vimenter * NERDTree	" Automatically open Nerdtree with Vim
+let NERDTreeChDirMode  = 2	" Changes pwd with root-node change
 let NERDTRreeMinimalUI = 1
 let NERDTRreeDirArrows = 1
 let g:NERDTreeIndicatorMapCustom = {
@@ -50,6 +64,9 @@ let g:NERDTreeIndicatorMapCustom = {
     \ }
 
 
-"""""""""" NEOMAKE (linter)
+" NEOMAKE (linter)
 " When writing a buffer (no delay).
 call neomake#configure#automake('w')
+
+" vim-javacomplete2
+autocmd FileType jaav setlocal omnifunc=javacomplete#Complete
