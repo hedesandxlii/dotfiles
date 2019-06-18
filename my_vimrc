@@ -1,19 +1,16 @@
-call plug#begin('~/.local/share/nvim/plugged')
+set nocompatible              " be iMproved
+set modelines=0
+
+call plug#begin('~/.vim/plugged')
 " Nerdtree
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
 Plug 'neomake/neomake'
 
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java'}
-
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'janko/vim-test'
 
 call plug#end()
-
-set nocompatible              " be iMproved
-set modelines=0
 
 """""""""" Mappings 
 let mapleader = ","
@@ -105,6 +102,3 @@ let g:NERDTreeIndicatorMapCustom = {
 " NEOMAKE (linter)
 " When writing a buffer (no delay).
 call neomake#configure#automake('w')
-
-" vim-javacomplete2
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
