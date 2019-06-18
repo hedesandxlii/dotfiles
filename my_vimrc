@@ -7,30 +7,40 @@ Plug 'neomake/neomake'
 
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java'}
 
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'janko/vim-test'
 
 call plug#end()
 
 set nocompatible              " be iMproved
+set modelines=0
 
 """""""""" Mappings 
 let mapleader = ","
-nnoremap j gj
-nnoremap k gk
+nnoremap <Leader><Space> :noh<CR>
+nnoremap ; :
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 " Opens a terminal vertically with Ctrl+s(hell)
 " nnoremap <C-s> :vsplit :terminal<CR>
 
 " vimrc
-map <Leader>sv :source ~/.vimrc<CR>
-map <Leader>ev :tabedit ~/.vimrc<CR>
+map <Leader>sv :source $MYVIMRC<CR>
+map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
 
 " Formatting
-set tw=99
+set wrap
+set textwidth=79
+set formatoptions=qrn1
+set colorcolumn=85
 
 " Tabs
 set tabstop=4
 set shiftwidth=4
+set softtabstop=4
 set expandtab
 
 " Folds
@@ -38,6 +48,34 @@ set foldmethod=syntax
 set foldlevel=1
 set foldclose=all
 set foldnestmax=1
+
+" Search
+set ignorecase
+set smartcase
+set incsearch
+set showmatch
+set hlsearch
+
+" Movement
+nnoremap j gj
+nnoremap k gk
+nnoremap <tab> %
+
+" Misc
+set scrolloff=3
+set autoindent
+set visualbell
+set cursorline
+set ttyfast
+set ruler
+set laststatus=2
+set undofile
+set number relativenumber 
+set gdefault
+
+" Autocommands
+autocmd FocusLost * :wa
+autocmd BufEnter :syntax sync fromstart
 
 """""""""" Config
 "Auto-ladda filer som ändras på hårddisken.
@@ -69,4 +107,4 @@ let g:NERDTreeIndicatorMapCustom = {
 call neomake#configure#automake('w')
 
 " vim-javacomplete2
-autocmd FileType jaav setlocal omnifunc=javacomplete#Complete
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
