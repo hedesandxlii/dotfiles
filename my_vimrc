@@ -6,10 +6,14 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
+" Neomake (linting)
 Plug 'neomake/neomake'
 
+" 'hybrid numbers'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
+" vim-surround
+Plug 'tpope/vim-surround'
 call plug#end()
 
 """""""""" Mappings 
@@ -67,6 +71,7 @@ set ttyfast
 set ruler
 set laststatus=2
 set undofile
+set undodir="~/.vim/undofiles"
 set number relativenumber 
 set gdefault
 
