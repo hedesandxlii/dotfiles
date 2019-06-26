@@ -22,6 +22,7 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 " vim-surround
 Plug 'tpope/vim-surround'
 call plug#end()
+filetype plugin on
 
 """""""""" Mappings 
 let mapleader = ","
@@ -31,6 +32,9 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+"""""""""" File specific mappings
+autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR>
 
 " Opens a terminal vertically with Ctrl+s(hell)
 " nnoremap <C-s> :vsplit :terminal<CR>
