@@ -1,7 +1,3 @@
-echo Downloading Plug...
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
 echo Trying to hard-link $(realpath ./my_vimrc) to ~/.vimrc
 ln ./my_vimrc ~/.vimrc && 
 	echo Success! &&
