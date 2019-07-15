@@ -10,7 +10,7 @@ endif
 
 call plug#begin('~/.vim/plugged')
 " Nerdtree
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
 " 'hybrid numbers'
@@ -18,6 +18,9 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
 " vim-surround
 Plug 'tpope/vim-surround'
+
+" Syntastic
+Plug 'vim-syntastic/syntastic'
 
 call plug#end()
 filetype plugin on
@@ -30,7 +33,8 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
+nnoremap <Leader>+ :vertical resize +5<CR>
+nnoremap <Leader>- :vertical resize +5<CR>
 """""""""" File specific mappings
 autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR>
 
@@ -94,11 +98,12 @@ set autoread
 
 """""""""""""""""""" PLUGIN CONFIG
 " Nerdtree config
-map <C-t> :NERDTreeToggle<CR>	" Toggle NerdTree with Ctrl+n
+map <C-t> :NERDTreeToggle<CR>	" Toggle NerdTree with Ctrl+t
 " autocmd vimenter * NERDTree	" Automatically open Nerdtree with Vim
 let NERDTreeChDirMode  = 2	" Changes pwd with root-node change
 let NERDTRreeMinimalUI = 1
 let NERDTRreeDirArrows = 1
+let NERDTreeShowBookmarks = 1
 let g:NERDTreeIndicatorMapCustom = {
     \ "Modified"  : "✹",
     \ "Staged"    : "✚",
@@ -111,3 +116,14 @@ let g:NERDTreeIndicatorMapCustom = {
     \ 'Ignored'   : '☒',
     \ "Unknown"   : "?"
     \ }
+
+
+" Syntastic config (Just recommended from github)
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
