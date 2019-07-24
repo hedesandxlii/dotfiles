@@ -16,9 +16,6 @@ Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 " 'hybrid numbers'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
-" vim-surround
-Plug 'tpope/vim-surround'
-
 " Syntastic
 Plug 'vim-syntastic/syntastic'
 
@@ -34,6 +31,7 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+<<<<<<< HEAD:my_vimrc
 " Resize vertical splits
 nnoremap <Leader>m :vertical resize -5<CR>
 nnoremap <Leader>p :vertical resize +5<CR>
