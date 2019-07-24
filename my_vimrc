@@ -29,17 +29,22 @@ filetype plugin on
 let mapleader = ","
 nnoremap <Leader><Space> :noh<CR>
 nnoremap ; :
+" Movement between splits.
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <Leader>+ :vertical resize +5<CR>
-nnoremap <Leader>- :vertical resize +5<CR>
+" Resize vertical splits
+nnoremap <Leader>m :vertical resize -5<CR>
+nnoremap <Leader>p :vertical resize +5<CR>
+" terminal
+nnoremap <C-d> :sh<CR>
+" Autocomplete with j/k instead of arrowkeys
+inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
+inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
+
 """""""""" File specific mappings
 autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR>
-
-" Opens a terminal vertically with Ctrl+s(hell)
-" nnoremap <C-s> :vsplit :terminal<CR>
 
 " vimrc
 map <Leader>sv :source $MYVIMRC<CR>
@@ -87,6 +92,7 @@ set undofile
 set undodir="~/.vim/undofiles"
 set number relativenumber 
 set gdefault
+set directory^=$HOME/vimswap//
 
 " Autocommands
 autocmd FocusLost * :wa
@@ -127,3 +133,22 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+" C stuff
+let g:syntastic_c_check_header = 1
+" [buffer number] followed by filename:
+set statusline=[%n]\ %t
+" for Syntastic messages:
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+" show line#:column# on the right hand side
+set statusline+=%=%l:%c
+
+"" Syntastic fixa olika buffrar
+nnoremap <Leader>x :SyntasticReset<CR>
+" Wrappar content på errors
+function! SyntasticCheckHook(errors)
+    if !empty(a:errors)
+        let g:syntastic_loc_list_height = min([len(a:errors), 10])
+    endif
+endfunction
