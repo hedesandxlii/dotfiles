@@ -14,7 +14,11 @@ create_link() {
         read -p "Do you want to remove $2 and try linking again?" -n 1 -r
         echo   
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm $2
+	    if [ -d $2 ]; then
+	        rm -rf $2
+	    else
+               rm $2
+	    fi
             create_link $1 $2
         fi
     fi
