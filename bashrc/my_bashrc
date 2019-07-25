@@ -132,7 +132,7 @@ export PATH=${MY_SCRIPTS}:${PATH}
 # Prompt med git och fina färger
 PS1='\[\033[0;32m\]\[\033[0m\033[0;32m\]\u\[\033[0;36m\]@\h \w\[\033[0;32m\] - [$(git branch 2>/dev/null | grep "^*" | colrm 1 2)\[\033[0;32m\]]\[\033[0m\033[0;32m\] \$\[\033[0m\033[0;32m\]\[\033[0m\] '
 # Change title of window to current directory
-PROMPT_COMMAND='echo -en "\033]0;Terminal: $(whoami)@$(hostname) | $(pwd|cut -d "/" -f 4-100)\a"'
+PROMPT_COMMAND='echo -en "\033]0;$(whoami)@$(hostname) | $(pwd|cut -d "/" -f 4-100) | $0\a "'
 
 # Handy aliases
 alias naut='nautilus . > /dev/null &'

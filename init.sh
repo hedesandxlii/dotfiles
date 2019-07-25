@@ -1,13 +1,13 @@
 RELATIVE_PATH_VIMRC=./vimrc/my_vimrc
-RELATIVE_PATH_I3=./i3
-RELATIVE_PATH_I3STATUS=./i3status
+RELATIVE_PATH_I3=./i3/config
+RELATIVE_PATH_I3STATUS=./i3status/config
 RELATIVE_PATH_BASHRC=./bashrc/my_bashrc
 
 # Creates a link from source to destination
 # $1 source
 # $2 destination
 create_link() {
-    if ln -s $1 $2; then
+    if ln $1 $2; then
         echo "Link success: $1 to $2"
     else
         echo "Link failiure $1 to $2"
@@ -24,10 +24,11 @@ create_link() {
     fi
 }
 
+
 LINKS=(
 "create_link $RELATIVE_PATH_VIMRC $HOME/.vimrc"
-"create_link $RELATIVE_PATH_I3 $HOME/.config/i3"
-"create_link $RELATIVE_PATH_I3STATUS $HOME/.config/i3status"
+"create_link $RELATIVE_PATH_I3 $HOME/.config/i3/config"
+"create_link $RELATIVE_PATH_I3STATUS $HOME/.config/i3status/config"
 "create_link $RELATIVE_PATH_BASHRC $HOME/.bashrc"
 )
 
