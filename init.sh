@@ -3,13 +3,13 @@ RELATIVE_PATH_I3=./i3/config
 RELATIVE_PATH_I3STATUS=./i3status/config
 RELATIVE_PATH_BASHRC=./bashrc/my_bashrc
 
-if [ $1 == "help" ]; then
+print_help_and_exit() {
     echo -e "Usage:    $0 [-novim -noi3 -nobash]\n"
     echo -e "This script helps you set up my dotfiles and environment via hardlinks.\
 \nContains my .vimrc, .bashrc, and config for i3 and i3status.\nAlso offers to\
 install curl, i3 and rofi." | fmt -t
     exit
-fi
+}
 
 # Creates a link from source to destination
 # $1 source
@@ -23,7 +23,6 @@ create_link() {
         echo "Link success: $1 to $2"
         echo # newline to not make the output so crammed.
     else
-        echo "Link failiure $1 to $2"
         read -p "Do you want to remove $2 and try linking again?" answer
         case ${answer:0:1} in
             y|Y )
@@ -52,6 +51,9 @@ LINKS=(
 # Remove installs according to options
 for i in "$@"; do
     case $i in
+        help)
+            print_help_and_exit
+        ;;
         -novim)
             unset LINKS[0]
             ;;
