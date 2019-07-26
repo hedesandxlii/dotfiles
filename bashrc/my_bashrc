@@ -148,9 +148,10 @@ alias :q='exit'
 git config --global alias.co checkout
 git config --global alias.br branch
 git config --global alias.ci commit
-git config --global alias.st status
+git config --global alias.st 'status -s'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.unmodify 'checkout --'
+git config --global alias.log 'log --oneline'
 
 # Android development aliases
 alias emulator='~/Android/Sdk/emulator/emulator -avd $(~/Android/Sdk/emulator/emulator -list-avds | head -n 1) & '
