@@ -78,7 +78,7 @@ nnoremap k gk
 nnoremap <tab> %
 
 " Misc
-set scrolloff=3
+set scrolloff=10
 set autoindent
 set visualbell
 set cursorline
