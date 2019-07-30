@@ -135,6 +135,7 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 " C stuff
 let g:syntastic_c_check_header = 1
+let g:syntastic_cpp_config_file = '.syntastic_cpp_config'
 " [buffer number] followed by filename:
 set statusline=[%n]\ %t
 " for Syntastic messages:

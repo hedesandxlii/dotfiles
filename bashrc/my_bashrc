@@ -1,5 +1,5 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+
 # for examples
 
 # If not running interactively, don't do anything
@@ -129,8 +129,24 @@ export EDITOR='vim'
 export MY_SCRIPTS=$HOME/script
 export PATH=${MY_SCRIPTS}:${PATH}
 
-# Prompt med git och fina färger
-PS1='\[\033[0;32m\]\[\033[0m\033[0;32m\]\u\[\033[0;36m\]@\h \w\[\033[0;32m\] - [$(git branch 2>/dev/null | grep "^*" | colrm 1 2)\[\033[0;32m\]]\[\033[0m\033[0;32m\] \$\[\033[0m\033[0;32m\]\[\033[0m\] '
+# Prompt med git och fina färger. Lägger till [VIM] om en :sh shell används.
+
+green='\[\e[0;32m'
+cyan='\[\e[0;36m'
+yellow='\[\e[0;33m'
+end='\]'
+reset='\[\e[0m'
+# Used to wrap text in escape codes.
+# $1 text to be wrapped
+# $2 option
+
+if [ $VIM ]; then
+    VIM_SHELL_TEXT='[VIM :shell]'
+else
+    VIM_SHELL_TEXT=""
+fi
+# PS1='$green\u$end$reset@$cyan\h \w$reset - $green[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]$noattr $yellow${VIM_SHELL_TEXT}$noattr \$ \[$(tput sgr0)\]'
+PS1='\u'
 
 # Change title of window to current directory
 PROMPT_COMMAND_BASE="\033]0;$(whoami)@$(hostname) | $(dirs)"
@@ -159,6 +175,3 @@ alias mCurrentFocus='adb shell dumpsys window windows | grep -E mCurrentFocus'
 alias logcat='adb logcat'
 alias adbtime='adb shell date $(date +%m%d%H%M%Y)'
 alias getcrash='adb logcat | grep "beginning of crash" -A 20'
-
-
-
