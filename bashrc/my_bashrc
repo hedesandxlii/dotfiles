@@ -129,24 +129,45 @@ export EDITOR='vim'
 export MY_SCRIPTS=$HOME/script
 export PATH=${MY_SCRIPTS}:${PATH}
 
-# Prompt med git och fina färger. Lägger till [VIM] om en :sh shell används.
-
-green='\[\e[0;32m'
-cyan='\[\e[0;36m'
-yellow='\[\e[0;33m'
-end='\]'
-reset='\[\e[0m'
-# Used to wrap text in escape codes.
+### Prompt med git och fina färger. Lägger till [VIM] om en :sh shell används.
+# Used to wrap text in color using escape codes and then adding that to PS1
 # $1 text to be wrapped
-# $2 option
-
-if [ $VIM ]; then
-    VIM_SHELL_TEXT='[VIM :shell]'
-else
-    VIM_SHELL_TEXT=""
-fi
-# PS1='$green\u$end$reset@$cyan\h \w$reset - $green[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]$noattr $yellow${VIM_SHELL_TEXT}$noattr \$ \[$(tput sgr0)\]'
-PS1='\u'
+# $2 color, string.
+add_to_PS1() {
+    reset="\[$(tput sgr0)\]"
+    case $2 in
+        green)
+            PS1+="\[$(tput setaf 2)\]$1${reset}"
+            ;;
+        yellow)
+            PS1+="\[$(tput setaf 3)\]$1${reset}"
+            ;;
+        blue)
+            PS1+="\[$(tput setaf 4)\]$1${reset}"
+            ;;
+        cyan)
+            PS1+="\[$(tput setaf 6)\]$1${reset}"
+            ;;
+        *)
+            PS1+=$1
+            ;;
+    esac
+}
+# Set PS1
+set_my_PS1() {
+    unset PS1
+    add_to_PS1 "\u" green
+    add_to_PS1 "@"
+    add_to_PS1 "\h" cyan
+    add_to_PS1 ":"
+    add_to_PS1 "\w" blue
+    add_to_PS1 " - "
+    if [ $VIM ]; then VIM_SHELL_TEXT="[VIM :sh]"; fi
+    add_to_PS1 "$VIM_SHELL_TEXT" yellow
+    add_to_PS1 '[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]' green
+    add_to_PS1 "\$ "
+}
+set_my_PS1
 
 # Change title of window to current directory
 PROMPT_COMMAND_BASE="\033]0;$(whoami)@$(hostname) | $(dirs)"
