@@ -1,4 +1,4 @@
-set nocompatible              " be iMproved
+set nocompatible
 set modelines=0
 
 " Automatically installs 'vim-plug' if it is not installed.
@@ -25,30 +25,41 @@ Plug 'Valloric/YouCompleteMe'
 call plug#end()
 filetype plugin on
 
-"""""""""" Mappings
+
+""""""""""""
+" Mappings "
+""""""""""""
+
 let mapleader = ","
 nnoremap <Leader><Space> :noh<CR>
 nnoremap ; :
+
+" Movement
+nnoremap j gj
+nnoremap k gk
+nnoremap <tab> %
+
 " Movement between splits.
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
 " Resize vertical splits
 nnoremap <Leader>m :vertical resize -5<CR>
 nnoremap <Leader>p :vertical resize +5<CR>
-" terminal
-nnoremap <C-d> :sh<CR>
-" Autocomplete with j/k instead of arrowkeys
-"inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
-"inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
-"""""""""" File specific mappings
-"autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR> " Collides with jedi refactor
+" Open terminal with Ctrl+D (And then exit that with Ctrl+D aswell :D)
+nnoremap <C-d> :sh<CR>
 
 " vimrc
 map <Leader>sv :source $MYVIMRC<CR>
 map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
+
+
+""""""""""""
+" Settings "
+""""""""""""
 
 " Formatting
 set wrap
@@ -71,11 +82,6 @@ set foldlevel=1
 set foldclose=all
 set foldnestmax=1
 
-augroup vimrc
-  au BufReadPre * setlocal foldmethod=indent
-  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
-augroup END
-
 " Search
 set ignorecase
 set smartcase
@@ -83,14 +89,8 @@ set incsearch
 set showmatch
 set hlsearch
 
-" Movement
-nnoremap j gj
-nnoremap k gk
-nnoremap <tab> %
-
 " Misc
 set scrolloff=10
-set autoindent
 set visualbell
 set cursorline
 set ttyfast
@@ -99,34 +99,51 @@ set laststatus=2
 set undofile
 set number relativenumber
 set gdefault
+set autoread
 
-" get rid of nasty files
+" get rid those of nasty files
 set undodir=/tmp//
 set directory=/tmp//
 set backupdir=/tmp//
 
-" Autocommands
+
+""""""""""""""""""
+" File specifics "
+""""""""""""""""""
+
+"autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR> " Collides with jedi refactor
+
+
+""""""""""""""""
+" Autocommands "
+""""""""""""""""
 autocmd FocusLost * :wa
 autocmd BufEnter :syntax sync fromstart
 
-"""""""""" Config
-"Auto-ladda filer som ändras på hårddisken.
-set autoread
+augroup vimrc
+  au BufReadPre * setlocal foldmethod=indent
+  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
+augroup END
 
-"""""""""""""""""""" PLUGIN CONFIG
+
+"""""""""""""""""
+" Plugin Config "
+"""""""""""""""""
+
 " Nerdtree config
 map <C-t> :NERDTreeToggle<CR>	" Toggle NerdTree with Ctrl+t
+
 " autocmd vimenter * NERDTree	" Automatically open Nerdtree with Vim
 let NERDTreeChDirMode  = 2	" Changes pwd with root-node change
 let NERDTRreeMinimalUI = 1
 let NERDTRreeDirArrows = 1
 let NERDTreeShowBookmarks = 1
 let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
+    \ "Modified"  : "M",
+    \ "Staged"    : "S",
+    \ "Untracked" : "?",
     \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
+    \ "Unmerged"  : "Unmerged",
     \ "Deleted"   : "✖",
     \ "Dirty"     : "✗",
     \ "Clean"     : "✔︎",
