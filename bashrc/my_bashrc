@@ -122,7 +122,6 @@ fi
 
 
 # Mitt kladd
-set -o vi
 setxkbmap -option caps:escape
 export EDITOR='vim'
 
@@ -169,6 +168,8 @@ set_my_PS1() {
 }
 set_my_PS1
 
+set -o vi
+
 # Change title of window to current directory
 PROMPT_COMMAND_BASE="\033]0;$(whoami)@$(hostname) | $(dirs)"
 lastcmd() {
@@ -195,4 +196,4 @@ alias emulator='~/Android/Sdk/emulator/emulator -avd $(~/Android/Sdk/emulator/em
 alias mCurrentFocus='adb shell dumpsys window windows | grep -E mCurrentFocus'
 alias logcat='adb logcat'
 alias adbtime='adb shell date $(date +%m%d%H%M%Y)'
-alias getcrash='adb logcat | grep "beginning of crash" -A 20'
+alias getcrash='adb logcat -d | grep "beginning of crash" -A 30'

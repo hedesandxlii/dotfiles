@@ -19,10 +19,13 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 " Syntastic
 Plug 'vim-syntastic/syntastic'
 
+" YCM
+Plug 'Valloric/YouCompleteMe'
+
 call plug#end()
 filetype plugin on
 
-"""""""""" Mappings 
+"""""""""" Mappings
 let mapleader = ","
 nnoremap <Leader><Space> :noh<CR>
 nnoremap ; :
@@ -37,11 +40,11 @@ nnoremap <Leader>p :vertical resize +5<CR>
 " terminal
 nnoremap <C-d> :sh<CR>
 " Autocomplete with j/k instead of arrowkeys
-inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
-inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
+"inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
+"inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
 """""""""" File specific mappings
-autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR>
+"autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR> " Collides with jedi refactor
 
 " vimrc
 map <Leader>sv :source $MYVIMRC<CR>
@@ -49,21 +52,29 @@ map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
 
 " Formatting
 set wrap
-set textwidth=79
+set textwidth=100
 set formatoptions=qrn1
-set colorcolumn=85
+set colorcolumn=101
 
 " Tabs
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
+set autoindent
+set smartindent
+set cindent
 set expandtab
 
 " Folds
-set foldmethod=syntax
+set foldmethod=indent
 set foldlevel=1
 set foldclose=all
 set foldnestmax=1
+
+augroup vimrc
+  au BufReadPre * setlocal foldmethod=indent
+  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
+augroup END
 
 " Search
 set ignorecase
@@ -86,7 +97,7 @@ set ttyfast
 set ruler
 set laststatus=2
 set undofile
-set number relativenumber 
+set number relativenumber
 set gdefault
 
 " get rid of nasty files
@@ -100,7 +111,7 @@ autocmd BufEnter :syntax sync fromstart
 
 """""""""" Config
 "Auto-ladda filer som ändras på hårddisken.
-set autoread 
+set autoread
 
 """""""""""""""""""" PLUGIN CONFIG
 " Nerdtree config
@@ -150,6 +161,10 @@ nnoremap <Leader>x :SyntasticReset<CR>
 " Wrappar content på errors
 function! SyntasticCheckHook(errors)
     if !empty(a:errors)
-        let g:syntastic_loc_list_height = min([len(a:errors), 10])
-    endif
+       let g:syntastic_loc_list_height = min([len(a:errors), 10])
+   endif
 endfunction
+
+" YCM
+let g:ycm_python_binary_path = 'python'
+let g:ycm_autoclose_preview_window_after_completion=1
