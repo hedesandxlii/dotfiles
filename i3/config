@@ -170,6 +170,22 @@ bindsym $mod+p mode "passthrough"
 bindsym $mod+Shift+e mode "$mode_system"
 
 bar {
-        status_command i3status
-        separator_symbol "]["
+	tray_output none
+	status_command ~/repos/bumblebee-status/bumblebee-status -m \
+                            spotify \
+                            spacer \
+                            disk:root \
+                            cpu \
+                            memory \
+                            pasink \
+                            pasource \
+                            apt \
+                            spacer \
+                            battery \
+                            layout \
+                            datetime \
+                            -p root.path=/ \
+                            memory.format="{used}/{total}" \
+                            -t solarized
 }
+
