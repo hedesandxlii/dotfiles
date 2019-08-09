@@ -19,25 +19,10 @@ create_link() {
     if ! [ -d $(dirname $2) ]; then
         mkdir -p $(dirname $2)
     fi
-    if ln $1 $2; then
-        echo "Link success: $1 to $2"
-        echo # newline to not make the output so crammed.
+    if [ -f $2 ]; then
+        echo "There is already a file at $2. Please remove or back it up!"
     else
-        read -p "Do you want to remove $2 and try linking again?" answer
-        case ${answer:0:1} in
-            y|Y )
-                if [ -d $2 ]; then
-                    rm -rf $2
-                else
-                    rm $2
-                    create_link $1 $2
-                fi
-            ;;
-            * )
-                echo Suit yourself.
-                echo # newline to not make the output so crammed.
-            ;;
-        esac
+        echo source $(realpath $1) > $2
     fi
 }
 
