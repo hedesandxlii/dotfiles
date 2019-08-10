@@ -1,6 +1,5 @@
 RELATIVE_PATH_VIMRC=./vimrc/my_vimrc
-RELATIVE_PATH_I3=./i3/config
-RELATIVE_PATH_I3STATUS=./i3status/config
+RELATIVE_PATH_I3=./i3/
 RELATIVE_PATH_BASHRC=./bashrc/my_bashrc
 
 print_help_and_exit() {
@@ -11,14 +10,20 @@ install curl, i3 and rofi." | fmt -t
     exit
 }
 
+# Creates the folders needed for a file
+# $1 the file
+create_folder() {
+    if ! [ -d $(dirname $1) ]; then
+        mkdir -p $(dirname $1)
+    fi
+}
+
 # Creates a link from source to destination
 # $1 source
 # $2 destination
-create_link() {
+create_proxy_file() {
     # creates parentfolders if needed
-    if ! [ -d $(dirname $2) ]; then
-        mkdir -p $(dirname $2)
-    fi
+    create_folder $2
     if [ -f $2 ]; then
         echo "There is already a file at $2. Please remove or back it up!"
     else
@@ -26,11 +31,20 @@ create_link() {
     fi
 }
 
+# Creates a link from source to destination
+# $1 target
+# $2 link name
+create_symlink() {
+    create_folder $2
+    if ln -s $1 $2; then
+        echo "Symlink created: $2 -> $1"
+    fi
+}
+
 LINKS=(
-"create_link $RELATIVE_PATH_VIMRC       $HOME/.vimrc"
-"create_link $RELATIVE_PATH_I3          $HOME/.config/i3/config"
-"create_link $RELATIVE_PATH_I3STATUS    $HOME/.config/i3status/config"
-"create_link $RELATIVE_PATH_BASHRC      $HOME/.bashrc"
+"create_proxy_file $RELATIVE_PATH_VIMRC       $HOME/.vimrc"
+"create_symlink $(realpath $RELATIVE_PATH_I3) $HOME/.config/i3"
+"create_proxy_file $RELATIVE_PATH_BASHRC      $HOME/.bashrc"
 )
 
 # Remove installs according to options
@@ -44,10 +58,9 @@ for i in "$@"; do
             ;;
         -noi3)
             unset LINKS[1]
-            unset LINKS[2]
             ;;
         -nobash)
-            unset LINKS[3]
+            unset LINKS[2]
             ;;
     esac
 done
