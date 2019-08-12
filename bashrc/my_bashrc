@@ -22,19 +22,19 @@ export PATH=${MY_SCRIPTS}:${PATH}
 # $1 text to be wrapped
 # $2 color, string.
 add_to_PS1() {
-    reset="\[$(tput sgr0)\]"
+    reset="\[\e[0m\]"
     case $2 in
         green)
-            PS1+="\[$(tput setaf 2)\]$1${reset}"
+            PS1+="\[\e[32m\]$1${reset}"
             ;;
         yellow)
-            PS1+="\[$(tput setaf 3)\]$1${reset}"
+            PS1+="\[\e[33m\]$1${reset}"
             ;;
         blue)
-            PS1+="\[$(tput setaf 4)\]$1${reset}"
+            PS1+="\[\e[34m\]$1${reset}"
             ;;
         cyan)
-            PS1+="\[$(tput setaf 6)\]$1${reset}"
+            PS1+="\[\e[36m\]$1${reset}"
             ;;
         *)
             PS1+=$1
