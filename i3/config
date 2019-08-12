@@ -114,8 +114,12 @@ bindsym $mod+Shift+0 move container to workspace 10
 set $lock "i3lock -e -t -i ~/Pictures/kermit.png -p win"
 exec xautolock -time 15 -locker $lock
 
-# set natural scrolling with libinput
-exec xinput set-prop 14 306 1
+# 
+exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
+exec compton
+
+# input
+exec setxkbmap -option caps:escape
 
 # focus does not follow mouse
 focus_follows_mouse no
