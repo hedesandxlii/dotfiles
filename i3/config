@@ -66,9 +66,9 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # enable multimedia keys
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 1 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 1 -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 1 toggle
 
 # screen brightness controls
 bindsym $mod+F12 exec brightness+ # increase screen brightness
@@ -111,7 +111,7 @@ bindsym $mod+Shift+0 move container to workspace 10
 ############
 
 # lockscreen setup
-set $lock "i3lock -e -t -i ~/Pictures/kermit.png -p win"
+set $lock "i3lock -e -t -i ~/Pictures/Backgrounds/kermit.png -p win"
 exec xautolock -time 15 -locker $lock
 
 # 
@@ -119,7 +119,7 @@ exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
 exec compton
 
 # input
-exec setxkbmap -option caps:escape
+exec --no-startup-id "setxkbmap -option caps:escape"
 
 # focus does not follow mouse
 focus_follows_mouse no
