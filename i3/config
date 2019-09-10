@@ -66,9 +66,9 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # enable multimedia keys
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 1 +5%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 1 -5%
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 1 toggle
+bindsym $mod+F3 exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym $mod+F2 exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym $mod+F1 exec --no-startup-id pactl set-sink-mute 1 toggle
 
 # screen brightness controls
 bindsym $mod+F12 exec brightness+ # increase screen brightness
@@ -80,7 +80,7 @@ bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 # print screen
 bindsym Print exec scrot -u '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/Screenshots/'
 bindsym --release Shift+Print exec scrot -s '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/Screenshots/'
-#
+
 # switch to workspace
 bindsym $mod+1 workspace 1
 bindsym $mod+2 workspace 2
@@ -114,7 +114,7 @@ bindsym $mod+Shift+0 move container to workspace 10
 set $lock "i3lock -e -t -i ~/Pictures/Backgrounds/kermit.png -p win"
 exec xautolock -time 15 -locker $lock
 
-# 
+#
 exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
 exec compton
 
@@ -126,6 +126,17 @@ focus_follows_mouse no
 
 # workspace assignments
 assign [class="jetbrains-studio"] workspace 2
+
+workspace "1" output eDP-1
+workspace "2" output HDMI-1
+workspace "3" output eDP-1
+workspace "4" output HDMI-1
+workspace "5" output eDP-1
+workspace "6" output HDMI-1
+workspace "7" output eDP-1
+workspace "8" output HDMI-1
+workspace "9" output eDP-1
+workspace "10" output HDMI-1
 
 
 #########
