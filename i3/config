@@ -153,9 +153,8 @@ mode "resize" {
 }
 
 mode "passthrough" {
-        bindsym $mod+p mode "default"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+    bindsym $mod+p mode "default"
+    bindsym $mod+Shift+q kill
 }
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
