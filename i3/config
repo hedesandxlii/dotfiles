@@ -115,7 +115,9 @@ set $lock "i3lock -e -t -i ~/Pictures/Backgrounds/kermit.png -p win"
 exec xautolock -time 15 -locker $lock
 
 #
-exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
+# exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
+exec variety ~/Pictures/Backgrounds
+exec --no-startup-id redshift
 exec compton
 
 # input
@@ -125,7 +127,7 @@ exec --no-startup-id "setxkbmap -option caps:escape"
 focus_follows_mouse no
 
 # workspace assignments
-assign [class="jetbrains-studio"] workspace 2
+assign [class="^.*jetbrains.*$"] workspace 2
 
 workspace "1" output eDP-1
 workspace "2" output HDMI-1
@@ -189,18 +191,16 @@ bar {
 	status_command ~/repos/bumblebee-status/bumblebee-status -m \
                             spotify \
                             spacer \
-                            disk:root \
                             cpu \
                             memory \
                             pasink \
                             pasource \
-                            apt \
                             spacer \
+                            apt \
                             battery \
-                            layout \
                             datetime \
-                            -p root.path=/ \
-                            memory.format="{used}/{total}" \
+                            layout \
+                            -p memory.format="{percent:02.00f}%" \
                             -t solarized
 }
 
