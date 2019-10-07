@@ -65,15 +65,6 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
-# enable multimedia keys
-bindsym $mod+F3 exec --no-startup-id pactl set-sink-volume 0 +5%
-bindsym $mod+F2 exec --no-startup-id pactl set-sink-volume 0 -5%
-bindsym $mod+F1 exec --no-startup-id pactl set-sink-mute 1 toggle
-
-# screen brightness controls
-bindsym $mod+F12 exec brightness+ # increase screen brightness
-bindsym $mod+F11 exec brightness- # decrease screen brightness
-
 # touchpad controls
 bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 
@@ -159,6 +150,22 @@ mode "passthrough" {
     bindsym $mod+Shift+q kill
 }
 
+set $mode_media media n' brighness  | (j/k/Space) vol down/up/mute | (h/l) brighness up/down 
+mode "$mode_media" {
+    bindsym $mod+m mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+
+    # multimedia keys
+    bindsym k exec --no-startup-id volumechanger.sh +
+    bindsym j exec --no-startup-id volumechanger.sh -
+    bindsym Space exec --no-startup-id volumechanger.sh x
+
+    # screen brightness controls
+    bindsym l exec brightness+ # increase screen brightness
+    bindsym h exec brightness- # decrease screen brightness
+}
+
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id $lock , mode "default"
@@ -180,10 +187,12 @@ mode "$keyboard_layout" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
+
 bindsym $mod+space mode "$keyboard_layout"
 bindsym $mod+r mode "resize"
 bindsym $mod+p mode "passthrough"
 bindsym $mod+Shift+e mode "$mode_system"
+bindsym $mod+m mode "$mode_media"
 
 exec nm-applet
 bar {
