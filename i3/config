@@ -102,14 +102,14 @@ bindsym $mod+Shift+0 move container to workspace 10
 ############
 
 # lockscreen setup
-set $lock "i3lock -e -t -i ~/Pictures/Backgrounds/kermit.png -p win"
+set $lock "lock.sh"
 exec xautolock -time 15 -locker $lock
 
-#
-# exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
-exec variety ~/Pictures/Backgrounds
+# start up
+exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
 exec --no-startup-id redshift
 exec compton
+exec nm-applet
 
 # input
 exec --no-startup-id "setxkbmap -option caps:escape"
@@ -169,11 +169,11 @@ mode "$mode_media" {
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id $lock , mode "default"
-    bindsym e exec --no-startup-id i3-msg exit, mode "default"
-    bindsym s exec --no-startup-id $lock && systemctl suspend , mode "default"
-    bindsym h exec --no-startup-id $lock && systemctl hibernate , mode "default"
-    bindsym r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym Shift+s exec --no-startup-id systemctl poweroff, mode "default"
+    bindsym e exec --no-startup-id i3exit.sh logout, mode "default"
+    bindsym s exec --no-startup-id i3exit.sh suspend, mode "default"
+    bindsym h exec --no-startup-id i3exit.sh hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit.sh reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id i3exit.sh shutdown, mode "default"
 
     bindsym Return mode "default"
     bindsym Escape mode "default"
@@ -194,9 +194,7 @@ bindsym $mod+p mode "passthrough"
 bindsym $mod+Shift+e mode "$mode_system"
 bindsym $mod+m mode "$mode_media"
 
-exec nm-applet
 bar {
-#tray_output none
 	status_command ~/repos/bumblebee-status/bumblebee-status -m \
                             spotify \
                             spacer \
@@ -210,6 +208,7 @@ bar {
                             datetime \
                             layout \
                             -p memory.format="{percent:02.00f}%" \
+                            datetime.format="%d/%m/%y %H:%M:%S" \
                             -t solarized
 }
 
