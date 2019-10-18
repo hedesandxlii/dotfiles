@@ -131,6 +131,15 @@ workspace "8" output HDMI-1
 workspace "9" output eDP-1
 workspace "10" output HDMI-1
 
+# Colors
+# class                 border  bground text    indicator child_border
+client.focused          #35007A #35007A #FFFFFF #35007A   #310070
+client.focused_inactive #5F676A #5F676A #FFFFFF #5F676A   #5F676A
+client.unfocused        #222222 #222222 #777777 #292D2E   #222222
+client.urgent           #BC3A02 #BC3A02 #FFFFFF #900000   #900000
+client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
+
+client.background       #FFFFFF
 
 #########
 # Modes #
