@@ -110,6 +110,7 @@ exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
 exec --no-startup-id redshift
 exec compton
 exec nm-applet
+exec --no-startup-id sleep 3 && xfce4-power-manager
 
 # input
 exec --no-startup-id "setxkbmap -option caps:escape"
