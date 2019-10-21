@@ -66,7 +66,7 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # touchpad controls
-bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
+#bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 
 # print screen
 bindsym Print exec scrot -u '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/Screenshots/'
@@ -169,7 +169,7 @@ mode "$mode_media" {
     # multimedia keys
     bindsym k exec --no-startup-id volumechanger.sh +
     bindsym j exec --no-startup-id volumechanger.sh -
-    bindsym Space exec --no-startup-id volumechanger.sh x
+    bindsym space exec --no-startup-id volumechanger.sh x
 
     # screen brightness controls
     bindsym l exec brightness+ # increase screen brightness
