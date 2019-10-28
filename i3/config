@@ -132,15 +132,21 @@ workspace "8" output HDMI-1
 workspace "9" output eDP-1
 workspace "10" output HDMI-1
 
+set $focus_color #ee9d00
+
 # Colors
-# class                 border  bground text    indicator child_border
-client.focused          #35007A #35007A #FFFFFF #35007A   #310070
-client.focused_inactive #5F676A #5F676A #FFFFFF #5F676A   #5F676A
-client.unfocused        #222222 #222222 #777777 #292D2E   #222222
-client.urgent           #BC3A02 #BC3A02 #FFFFFF #900000   #900000
-client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
+# class                 border  bground text    indicator       child_border
+client.focused          #af7400 #af7400 #FFFFFF $focus_color    $focus_color
+client.focused_inactive #5F676A #5F676A #FFFFFF #5F676A         #5F676A
+client.unfocused        #222222 #222222 #777777 #292D2E         #222222
+client.urgent           #BC3A02 #BC3A02 #FFFFFF #900000         #900000
+client.placeholder      #000000 #0C0C0C #FFFFFF #000000         #0C0C0C
 
 client.background       #FFFFFF
+
+for_window [class="^.*"] border pixel 5
+gaps inner 10
+smart_gaps on
 
 #########
 # Modes #
@@ -205,20 +211,31 @@ bindsym $mod+Shift+e mode "$mode_system"
 bindsym $mod+m mode "$mode_media"
 
 bar {
-	status_command ~/repos/bumblebee-status/bumblebee-status -m \
-                            spotify \
-                            spacer \
-                            cpu \
-                            memory \
-                            pasink \
-                            pasource \
-                            spacer \
-                            apt \
-                            battery \
-                            datetime \
-                            layout \
-                            -p memory.format="{percent:02.00f}%" \
-                            datetime.format="%d/%m/%y %H:%M:%S" \
-                            -t solarized
+    colors {
+        background #000000
+        statusline #FFFFFF
+        separator  #666666
+
+        focused_workspace  $focus_color $focus_color    #000000
+        active_workspace   #333333      #222222         #FFFFFF
+        inactive_workspace #333333      #222222         #888888
+        urgent_workspace   #2F343A      #2F343A         #FFFFFF
+        binding_mode       #2F343A      #2F343A         #FFFFFF
+    }
+    status_command ~/repos/bumblebee-status/bumblebee-status -m \
+        spotify \
+        spacer \
+        cpu \
+        memory \
+        pasink \
+        pasource \
+        spacer \
+        apt \
+        battery \
+        datetime \
+        layout \
+        -p memory.format="{percent:02.00f}%" \
+        datetime.format="%d/%m/%y %H:%M:%S" \
+        -t solarized
 }
 
