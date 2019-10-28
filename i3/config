@@ -120,6 +120,7 @@ focus_follows_mouse no
 
 # workspace assignments
 assign [class="^.*jetbrains.*$"] workspace 2
+for_window [class="Spotify"] move container to workspace "3"
 
 workspace "1" output eDP-1
 workspace "2" output HDMI-1
@@ -135,12 +136,12 @@ workspace "10" output HDMI-1
 set $focus_color #ee9d00
 
 # Colors
-# class                 border  bground text    indicator       child_border
-client.focused          #af7400 #af7400 #FFFFFF $focus_color    $focus_color
-client.focused_inactive #5F676A #5F676A #FFFFFF #5F676A         #5F676A
-client.unfocused        #222222 #222222 #777777 #292D2E         #222222
-client.urgent           #BC3A02 #BC3A02 #FFFFFF #900000         #900000
-client.placeholder      #000000 #0C0C0C #FFFFFF #000000         #0C0C0C
+# class                 border          bground text    text    indicator   child_border
+client.focused          $focus_color    $focus_color    #000000 #ffffff     $focus_color
+client.focused_inactive #5F676A         #5F676A         #FFFFFF #5F676A     #5F676A
+client.unfocused        #222222         #222222         #777777 #292D2E     #222222
+client.urgent           #BC3A02         #BC3A02         #FFFFFF #900000     #900000
+client.placeholder      #000000         #0C0C0C         #FFFFFF #000000     #0C0C0C
 
 client.background       #FFFFFF
 
