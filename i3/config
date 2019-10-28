@@ -147,6 +147,7 @@ client.background       #FFFFFF
 for_window [class="^.*"] border pixel 5
 gaps inner 10
 smart_gaps on
+smart_borders on
 
 #########
 # Modes #
