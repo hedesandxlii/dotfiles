@@ -14,9 +14,6 @@ fi
 set -o vi
 
 export EDITOR='vim'
-export MY_SCRIPTS=$HOME/script
-export PATH=${MY_SCRIPTS}:${PATH}
-
 
 # Used to wrap text in color using escape codes and then adding that to PS1
 # $1 text to be wrapped
@@ -67,6 +64,7 @@ PROMPT_COMMAND=lastcmd
 # Handy aliases
 alias naut='nautilus . > /dev/null &'
 alias :q='exit'
+alias chrome="chromium-browser"
 
 # git aliases
 git config --global alias.co checkout

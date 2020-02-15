@@ -34,6 +34,7 @@ bindsym $mod+d exec rofi -show run
 bindsym $mod+Shift+d exec i3-dmenu-desktop --dmenu='rofi -dmenu'
 
 # vim-like focus
+bindsym $mod+Tab focus down
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
@@ -69,8 +70,17 @@ bindsym $mod+a focus parent
 #bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 
 # print screen
-bindsym Print exec scrot -u '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/Screenshots/'
-bindsym --release Shift+Print exec scrot -s '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/Screenshots/'
+set $screenshot_location ~/Pictures/Screenshots/$(date +%Y%m%d%H%M%S).png
+bindsym Print exec gnome-screenshot -f $screenshot_location
+# Alt+print screenshots current window (-w)
+bindsym $mod+Print exec gnome-screenshot -w -f $screenshot_location
+# Shift+print screenshots a user selected area (-a)
+bindsym Shift+Print exec gnome-screenshot -a -f $screenshot_location
+
+# Same as above, but add Ctrl to save to clipboard.(-c)
+bindsym Ctrl+Print exec gnome-screenshot -c
+bindsym Ctrl+$mod+Print exec gnome-screenshot -w -c
+bindsym Ctrl+Shift+Print exec gnome-screenshot -a -c
 
 # switch to workspace
 bindsym $mod+1 workspace 1
@@ -85,17 +95,16 @@ bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace 1
-bindsym $mod+Shift+2 move container to workspace 2
-bindsym $mod+Shift+3 move container to workspace 3
-bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+5 move container to workspace 5
-bindsym $mod+Shift+6 move container to workspace 6
-bindsym $mod+Shift+7 move container to workspace 7
-bindsym $mod+Shift+8 move container to workspace 8
-bindsym $mod+Shift+9 move container to workspace 9
-bindsym $mod+Shift+0 move container to workspace 10
-
+bindsym $mod+Shift+1 move container to workspace 1, workspace 1
+bindsym $mod+Shift+2 move container to workspace 2, workspace 2
+bindsym $mod+Shift+3 move container to workspace 3, workspace 3
+bindsym $mod+Shift+4 move container to workspace 4, workspace 4
+bindsym $mod+Shift+5 move container to workspace 5, workspace 5
+bindsym $mod+Shift+6 move container to workspace 6, workspace 6
+bindsym $mod+Shift+7 move container to workspace 7, workspace 7
+bindsym $mod+Shift+8 move container to workspace 8, workspace 8
+bindsym $mod+Shift+9 move container to workspace 9, workspace 9
+bindsym $mod+Shift+0 move container to workspace 10, workspace 10
 
 ############
 # Settings #
@@ -106,11 +115,14 @@ set $lock "lock.sh"
 exec xautolock -time 15 -locker $lock
 
 # start up
-exec feh --bg-center ~/Pictures/Backgrounds/kermit.png
+exec feh --bg-center ~/Pictures/Backgrounds/pretty_mountains.jpg
 exec --no-startup-id redshift
-exec compton
 exec nm-applet
 exec --no-startup-id sleep 3 && xfce4-power-manager
+
+# monitor setup.
+exec --no-startup-id sleep 3 && xrandr --output HDMI-1 --primary
+exec --no-startup-id sleep 3 && xrandr --output eDP-1 --right-of HDMI-1
 
 # input
 exec --no-startup-id "setxkbmap -option caps:escape"
@@ -145,7 +157,7 @@ client.placeholder      #000000         #0C0C0C         #FFFFFF #000000     #0C0
 
 client.background       #FFFFFF
 
-for_window [class="^.*"] border pixel 5
+for_window [class="^.*"] border pixel 3
 gaps inner 10
 smart_gaps on
 smart_borders on
@@ -167,12 +179,21 @@ mode "passthrough" {
     bindsym $mod+p mode "default"
     bindsym $mod+Shift+q kill
 }
+                        #prev / playpause  / next    volume:     down  /up    /mute    bright up/down
+ 
+set $mode_media (u/i/o) \uf04a/\uf04b\uf04c/\uf04e      |\
+  (j/k/Space) \uf027/\uf028/\uf026      |\
+  (h/l) \uf186/\uf185 
 
-set $mode_media media n' brighness  | (j/k/Space) vol down/up/mute | (h/l) brighness up/down 
 mode "$mode_media" {
     bindsym $mod+m mode "default"
     bindsym Return mode "default"
     bindsym Escape mode "default"
+
+    # volume controls
+    bindsym u exec playerctl previous
+    bindsym i exec playerctl play-pause
+    bindsym o exec playerctl next
 
     # multimedia keys
     bindsym k exec --no-startup-id volumechanger.sh +
@@ -206,7 +227,7 @@ mode "$keyboard_layout" {
         bindsym Escape mode "default"
 }
 
-bindsym $mod+space mode "$keyboard_layout"
+bindsym $super+space mode "$keyboard_layout"
 bindsym $mod+r mode "resize"
 bindsym $mod+p mode "passthrough"
 bindsym $mod+Shift+e mode "$mode_system"

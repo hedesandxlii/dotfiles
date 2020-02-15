@@ -1,5 +1,5 @@
 RELATIVE_PATH_VIMRC=./vimrc/my_vimrc
-RELATIVE_PATH_I3=./i3/
+RELATIVE_PATH_I3=./i3/config
 RELATIVE_PATH_BASHRC=./bashrc/my_bashrc
 
 print_help_and_exit() {
@@ -36,15 +36,26 @@ create_proxy_file() {
 # $2 link name
 create_symlink() {
     create_folder $2
-    if ln -s $1 $2; then
+    if ln -sv $1 $2 >/dev/null; then
         echo "Symlink created: $2 -> $1"
+    else 
+        read -p "Do you want to replace $2 (y/n)?" answer
+        case ${answer:0:1} in
+            y|Y )
+                rm $2
+		create_symlink $1 $2
+            ;;
+            * )
+                echo Suit yourself.
+            ;;
+        esac
     fi
 }
 
 LINKS=(
-"create_proxy_file $RELATIVE_PATH_VIMRC       $HOME/.vimrc"
-"create_symlink $(realpath $RELATIVE_PATH_I3) $HOME/.config/i3"
-"create_proxy_file $RELATIVE_PATH_BASHRC      $HOME/.bashrc"
+"create_symlink $(realpath $RELATIVE_PATH_VIMRC)       $HOME/.vimrc"
+"create_symlink $(realpath $RELATIVE_PATH_I3) $HOME/.config/i3/config"
+"create_symlink $(realpath $RELATIVE_PATH_BASHRC)      $HOME/.bashrc"
 )
 
 # Remove installs according to options
@@ -79,3 +90,7 @@ case ${answer:0:1} in
         echo Suit yourself.
     ;;
 esac
+
+unset create_symlink
+unset print_help_and_exit
+unset create_proxy_file
