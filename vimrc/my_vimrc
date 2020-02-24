@@ -110,7 +110,7 @@ set backupdir=/tmp//
 """"""""""""""""""
 " File specifics "
 """"""""""""""""""
-
+autocmd FileType python nnoremap <leader>r <Esc>:w<CR>:!clear;python3 %<CR>
 
 """"""""""""""""
 " Autocommands "
@@ -121,6 +121,7 @@ autocmd BufEnter :syntax sync fromstart
 augroup vimrc
   " Remove all vimrc autocommands
   autocmd!
+  " Add them again
   au BufReadPre * setlocal foldmethod=indent
   au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
 augroup END
