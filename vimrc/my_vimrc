@@ -10,14 +10,11 @@ endif
 
 call plug#begin('~/.vim/plugged')
 " Nerdtree
-Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
 " 'hybrid numbers'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-
-" Syntastic
-Plug 'vim-syntastic/syntastic'
 
 " YCM
 Plug 'Valloric/YouCompleteMe'
@@ -110,8 +107,6 @@ set backupdir=/tmp//
 " File specifics "
 """"""""""""""""""
 
-"autocmd Filetype python nnoremap <buffer> <Leader>r :!python % <CR> " Collides with jedi refactor
-
 
 """"""""""""""""
 " Autocommands "
@@ -120,6 +115,8 @@ autocmd FocusLost * :wa
 autocmd BufEnter :syntax sync fromstart
 
 augroup vimrc
+  " Remove all vimrc autocommands
+  autocmd!
   au BufReadPre * setlocal foldmethod=indent
   au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
 augroup END
@@ -150,37 +147,6 @@ let g:NERDTreeIndicatorMapCustom = {
     \ "Unknown"   : "?"
     \ }
 
-
-" Syntastic config (Just recommended from github)
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-" C stuff
-let g:syntastic_c_check_header = 1
-let g:syntastic_cpp_config_file = '.syntastic_cpp_config'
-" [buffer number] followed by filename:
-set statusline=[%n]\ %t
-" for Syntastic messages:
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-" show line#:column# on the right hand side
-set statusline+=%=%l:%c
-
-"" Syntastic fixa olika buffrar
-nnoremap <Leader>x :SyntasticReset<CR>
-" Wrappar content på errors
-function! SyntasticCheckHook(errors)
-    if !empty(a:errors)
-       let g:syntastic_loc_list_height = min([len(a:errors), 10])
-   endif
-endfunction
-
 " YCM
-let g:ycm_python_binary_path = 'python'
+let g:ycm_python_binary_path = 'python3'
 let g:ycm_autoclose_preview_window_after_completion=1
