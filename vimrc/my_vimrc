@@ -46,6 +46,9 @@ nnoremap <C-l> <C-w>l
 nnoremap <Leader>m :vertical resize -5<CR>
 nnoremap <Leader>p :vertical resize +5<CR>
 
+" Command mode with swedish keyboard layout
+nnoremap ö :
+
 " Open terminal with Ctrl+D (And then exit that with Ctrl+D aswell :D)
 nnoremap <C-d> :sh<CR>
 
