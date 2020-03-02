@@ -81,3 +81,6 @@ alias mCurrentFocus='adb shell dumpsys window windows | grep -E mCurrentFocus'
 alias logcat='adb logcat'
 alias adbtime='adb shell date $(date +%m%d%H%M%Y)'
 alias getcrash='adb logcat -d | grep "beginning of crash" -A 30'
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

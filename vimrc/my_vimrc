@@ -17,11 +17,19 @@ Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 
 " YCM
-Plug 'Valloric/YouCompleteMe'
+"Plug 'Valloric/YouCompleteMe'
+
+" Anderson theme
+Plug 'gilgigilgil/anderson.vim'
+
+" Jedi-vim (Autocomplete for python)
+Plug 'davidhalter/jedi-vim'
 
 call plug#end()
-filetype plugin on
 
+filetype plugin on
+" Apply colorscheme.
+colorscheme anderson
 
 """"""""""""
 " Mappings "
@@ -66,7 +74,7 @@ map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
 set wrap
 set textwidth=100
 set formatoptions=qrn1
-set colorcolumn=101
+set colorcolumn=+1
 
 " Tabs
 set tabstop=4
@@ -110,13 +118,20 @@ set backupdir=/tmp//
 """"""""""""""""""
 " File specifics "
 """"""""""""""""""
-autocmd FileType python nnoremap <leader>r <Esc>:w<CR>:!clear;python3 %<CR>
+autocmd FileType python nnoremap <leader>; <Esc>:w<CR>:!clear;python3 %<CR>
+autocmd FileType python nnoremap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
+
+autocmd FileType markdown nnoremap <leader>o <Esc>:w<CR>:! $BROWSER %<CR>
 
 """"""""""""""""
 " Autocommands "
 """"""""""""""""
 autocmd FocusLost * :wa
 autocmd BufEnter :syntax sync fromstart
+
+" Fixes cursor on exit and leave.
+autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
+autocmd VimLeave * silent exec "! echo -ne '\e[5 q'"
 
 augroup vimrc
   " Remove all vimrc autocommands
