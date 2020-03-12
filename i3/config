@@ -70,17 +70,10 @@ bindsym $mod+a focus parent
 #bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 
 # print screen
-set $screenshot_location ~/Pictures/Screenshots/$(date +%Y%m%d%H%M%S).png
-bindsym Print exec gnome-screenshot -f $screenshot_location
-# Alt+print screenshots current window (-w)
-bindsym $mod+Print exec gnome-screenshot -w -f $screenshot_location
-# Shift+print screenshots a user selected area (-a)
-bindsym Shift+Print exec gnome-screenshot -a -f $screenshot_location
-
-# Same as above, but add Ctrl to save to clipboard.(-c)
-bindsym Ctrl+Print exec gnome-screenshot -c
-bindsym Ctrl+$mod+Print exec gnome-screenshot -w -c
-bindsym Ctrl+Shift+Print exec gnome-screenshot -a -c
+#set $screenshot_folder ~/Pictures/Screenshots/
+bindsym Print exec scrot '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/Screenshots/'
+# Alt+'plus'(really equals) screenshots for selection (-s)
+bindsym --release $mod+plus exec scrot -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/Screenshots/'
 
 # switch to workspace
 bindsym $mod+1 workspace 1
