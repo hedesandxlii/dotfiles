@@ -44,7 +44,7 @@ create_symlink() {
         case ${answer:0:1} in
             y|Y )
                 rm $2
-		create_symlink $1 $2
+        create_symlink $1 $2
             ;;
             * )
                 echo Suit yourself.
