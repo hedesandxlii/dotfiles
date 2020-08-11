@@ -1,6 +1,7 @@
 RELATIVE_PATH_VIMRC=./vimrc/my_vimrc
 RELATIVE_PATH_I3=./i3/config
 RELATIVE_PATH_BASHRC=./bashrc/my_bashrc
+RELATIVE_PATH_TMUX_CONF=./tmux/tmux.conf
 
 print_help_and_exit() {
     echo -e "Usage:    $0 [-novim -noi3 -nobash]\n"
@@ -38,7 +39,7 @@ create_symlink() {
     create_folder $2
     if ln -sv $1 $2 >/dev/null; then
         echo "Symlink created: $2 -> $1"
-    else 
+    else
         read -p "Do you want to replace $2 (y/n)?" answer
         case ${answer:0:1} in
             y|Y )
@@ -53,9 +54,10 @@ create_symlink() {
 }
 
 LINKS=(
-"create_symlink $(realpath $RELATIVE_PATH_VIMRC)       $HOME/.vimrc"
-"create_symlink $(realpath $RELATIVE_PATH_I3) $HOME/.config/i3/config"
-"create_symlink $(realpath $RELATIVE_PATH_BASHRC)      $HOME/.bashrc"
+"create_symlink $(realpath $RELATIVE_PATH_VIMRC)     $HOME/.vimrc"
+"create_symlink $(realpath $RELATIVE_PATH_I3)        $HOME/.config/i3/config"
+"create_symlink $(realpath $RELATIVE_PATH_BASHRC)    $HOME/.bashrc"
+"create_symlink $(realpath $RELATIVE_PATH_TMUX_CONF) $HOME/.tmux.conf"
 )
 
 # Remove installs according to options
@@ -81,10 +83,10 @@ for i in "${!LINKS[@]}"; do
     ${LINKS[$i]}
 done
 
-read -p "Do you want to install packages using apt? (curl, i3, rofi, ...)" answer
+read -p "Do you want to install packages using apt?" answer
 case ${answer:0:1} in
     y|Y )
-        sudo apt install curl i3 rofi
+        sudo apt install curl i3 rofi volumeicon tmux
     ;;
     * )
         echo Suit yourself.
