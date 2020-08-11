@@ -69,6 +69,7 @@ alias naut='nautilus . > /dev/null &'
 alias :q='exit'
 alias chrome="chromium-browser"
 alias py="python3"
+alias tmux='tmux -2'
 
 # git aliases
 git config --global alias.co checkout
