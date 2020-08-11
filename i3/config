@@ -79,11 +79,6 @@ bindsym $super+Print exec maim -i $(xdotool getactivewindow) $screenshot_locatio
 # Shift+print screenshots a user selected area (-a)
 bindsym Shift+Print exec maim -s $screenshot_location
 
-# Same as above, but add Ctrl to save to clipboard.(-c)
-# bindsym Ctrl+Print exec gnome-screenshot -c
-# bindsym Ctrl+$mod+Print exec gnome-screenshot -w -c
-# bindsym Ctrl+Shift+Print exec gnome-screenshot -a -c
-
 # workspace definition
 set $ws1 1: term
 set $ws2 2: web
@@ -91,6 +86,10 @@ set $ws3 3: spotify
 set $ws4 4
 set $ws5 5
 set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+set $ws10 10
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -99,6 +98,10 @@ bindsym $mod+3 workspace $ws3
 bindsym $mod+4 workspace $ws4
 bindsym $mod+5 workspace $ws5
 bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $ws1, workspace $ws1
@@ -275,6 +278,6 @@ bar {
         datetime \
         layout \
         -p memory.format="{percent:02.00f}%" \
-        datetime.format="%d/%m/%y %H:%M:%S" \
+        datetime.format="%d/%m/%y %H:%M:%S"
 }
 
