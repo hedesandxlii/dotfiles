@@ -49,7 +49,7 @@ set_my_PS1() {
     add_to_PS1 " - "
     if [ $VIM ]; then add_to_PS1 "[VIM :sh]" yellow; fi
     add_to_PS1 '[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]' green
-    add_to_PS1 "\$ "
+    add_to_PS1 "\n\$ "
 }
 set_my_PS1
 
