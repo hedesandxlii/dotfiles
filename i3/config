@@ -222,8 +222,8 @@ mode "$mode_system" {
 
 set $keyboard_layout Keyboard Layout: (s) Svenska, (e) US English
 mode "$keyboard_layout" {
-        bindsym s exec --no-startup-id setxkbmap se, mode  "default"
-        bindsym e exec --no-startup-id setxkbmap us, mode "default"
+        bindsym s exec --no-startup-id setxkbmap se -option caps:escape, mode  "default"
+        bindsym e exec --no-startup-id setxkbmap us -option caps:escape, mode "default"
 
         bindsym Return mode "default"
         bindsym Escape mode "default"
