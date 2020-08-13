@@ -23,7 +23,7 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'gilgigilgil/anderson.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
-
+Plug 'nvie/vim-flake8'
 " Jedi-vim (Autocomplete for python)
 Plug 'davidhalter/jedi-vim'
 
@@ -43,11 +43,16 @@ nnoremap <F8> :set number! relativenumber!<CR>
 nnoremap j gj
 nnoremap k gk
 nnoremap <tab> %
+
 " Movement between splits.
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+" Movement between buffers
+nnoremap <Leader>bn :bnext<CR>
+nnoremap <Leader>bp :bprevious<CR>
 
 " Resize vertical splits
 nnoremap <Leader>m :vertical resize -5<CR>
@@ -75,7 +80,7 @@ map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
 
 " Formatting
 set wrap
-set textwidth=100
+set textwidth=80
 set formatoptions=qrn1
 set colorcolumn=+1
 
