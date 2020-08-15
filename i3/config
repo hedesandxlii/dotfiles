@@ -52,6 +52,7 @@ bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
@@ -70,34 +71,45 @@ bindsym $mod+a focus parent
 #bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 
 # print screen
-#set $screenshot_folder ~/Pictures/Screenshots/
-bindsym Print exec scrot '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/Screenshots/'
-# Alt+'plus'(really equals) screenshots for selection (-s)
-bindsym --release $mod+plus exec scrot -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/Screenshots/'
+set $screenshot_location ~/Pictures/Screenshots/$(date +%Y%B%d_%H.%M.%S).png
+
+bindsym Print exec maim $screenshot_location
+# Super+print screenshots current window (-w)
+bindsym $super+Print exec maim -i $(xdotool getactivewindow) $screenshot_location
+# Shift+print screenshots a user selected area (-a)
+bindsym Shift+Print exec maim -s $screenshot_location
+
+# workspace definition
+set $ws1 1: term
+set $ws2 2: web
+set $ws3 3: spotify
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+set $ws10 10
 
 # switch to workspace
-bindsym $mod+1 workspace 1
-bindsym $mod+2 workspace 2
-bindsym $mod+3 workspace 3
-bindsym $mod+4 workspace 4
-bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
-bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace 9
-bindsym $mod+0 workspace 10
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace 1, workspace 1
-bindsym $mod+Shift+2 move container to workspace 2, workspace 2
-bindsym $mod+Shift+3 move container to workspace 3, workspace 3
-bindsym $mod+Shift+4 move container to workspace 4, workspace 4
-bindsym $mod+Shift+5 move container to workspace 5, workspace 5
-bindsym $mod+Shift+6 move container to workspace 6, workspace 6
-bindsym $mod+Shift+7 move container to workspace 7, workspace 7
-bindsym $mod+Shift+8 move container to workspace 8, workspace 8
-bindsym $mod+Shift+9 move container to workspace 9, workspace 9
-bindsym $mod+Shift+0 move container to workspace 10, workspace 10
+bindsym $mod+Shift+1 move container to workspace $ws1, workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2, workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3, workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4, workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5, workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6, workspace $ws6
 
 ############
 # Settings #
@@ -111,6 +123,7 @@ exec xautolock -time 15 -locker $lock
 exec feh --bg-center ~/Pictures/Backgrounds/pretty_mountains.jpg
 exec --no-startup-id redshift
 exec nm-applet
+exec --no-startup-id volumeicon
 exec --no-startup-id sleep 3 && xfce4-power-manager
 
 # monitor setup.
@@ -124,8 +137,7 @@ exec --no-startup-id "setxkbmap -option caps:escape"
 focus_follows_mouse no
 
 # workspace assignments
-assign [class="^.*jetbrains.*$"] workspace 2
-for_window [class="Spotify"] move container to workspace "3"
+for_window [class="Spotify"] move container to workspace $ws3
 
 workspace "1" output eDP-1
 workspace "2" output HDMI-1
@@ -151,9 +163,6 @@ client.placeholder      #000000         #0C0C0C         #FFFFFF #000000     #0C0
 client.background       #FFFFFF
 
 for_window [class="^.*"] border pixel 3
-gaps inner 10
-smart_gaps on
-smart_borders on
 
 #########
 # Modes #
@@ -213,13 +222,35 @@ mode "$mode_system" {
 
 set $keyboard_layout Keyboard Layout: (s) Svenska, (e) US English
 mode "$keyboard_layout" {
-        bindsym s exec --no-startup-id setxkbmap se, mode  "default"
-        bindsym e exec --no-startup-id setxkbmap us, mode "default"
+        bindsym s exec --no-startup-id setxkbmap se -option caps:escape, mode  "default"
+        bindsym e exec --no-startup-id setxkbmap us -option caps:escape, mode "default"
 
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
 
+## Manual management of external displays
+# Set the shortcuts and what they do
+set $primary_screen HDMI-1
+set $secondary_screen eDP-1
+set $mode_display Monitor Management: Primary Only (p) | Secondary Only (s) | Both (b)
+mode "$mode_display" {
+    bindsym p exec --no-startup-id xrandr --output $primary_screen --auto \
+                                        --output $secondary_screen --off, \
+                                        mode "default"
+    bindsym s exec --no-startup-id xrandr --output $secondary_screen --auto \
+                                        --output $primary_screen --off, \
+                                        mode "default"
+    bindsym b exec --no-startup-id xrandr --output $primary_screen --auto \
+                                        --right-of $secondary_screen --auto, \
+                                        mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+x mode "$mode_display"
 bindsym $super+space mode "$keyboard_layout"
 bindsym $mod+r mode "resize"
 bindsym $mod+p mode "passthrough"
@@ -238,20 +269,15 @@ bar {
         urgent_workspace   #2F343A      #2F343A         #FFFFFF
         binding_mode       #2F343A      #2F343A         #FFFFFF
     }
-    status_command ~/repos/not_my_projects/bumblebee-status/bumblebee-status -m \
-        spotify \
+    status_command bumblebee-status -m \
         spacer \
         cpu \
         memory \
-        pasink \
-        pasource \
         spacer \
-        apt \
         battery \
         datetime \
         layout \
         -p memory.format="{percent:02.00f}%" \
-        datetime.format="%d/%m/%y %H:%M:%S" \
-        -t solarized
+        datetime.format="%d/%m/%y %H:%M:%S"
 }
 

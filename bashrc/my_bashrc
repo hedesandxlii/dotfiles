@@ -49,9 +49,12 @@ set_my_PS1() {
     add_to_PS1 " - "
     if [ $VIM ]; then add_to_PS1 "[VIM :sh]" yellow; fi
     add_to_PS1 '[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]' green
-    add_to_PS1 "\$ "
+    add_to_PS1 "\n\$ "
 }
 set_my_PS1
+
+# Trim lenght of prompt.
+export PROMPT_DIRTRIM=2
 
 # Change title of window to current directory
 PROMPT_COMMAND_BASE="\033]0;$(whoami)@$(hostname) | $(dirs)"
@@ -65,6 +68,8 @@ PROMPT_COMMAND=lastcmd
 alias naut='nautilus . > /dev/null &'
 alias :q='exit'
 alias chrome="chromium-browser"
+alias py="python3"
+alias tmux='tmux -2'
 
 # git aliases
 git config --global alias.co checkout
@@ -74,6 +79,7 @@ git config --global alias.st 'status -s'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
+git config --global alias.magic 'push origin HEAD:refs/for/master'
 
 # Android development aliases
 alias emulator='~/Android/Sdk/emulator/emulator -avd $(~/Android/Sdk/emulator/emulator -list-avds | head -n 1) & '
@@ -81,6 +87,3 @@ alias mCurrentFocus='adb shell dumpsys window windows | grep -E mCurrentFocus'
 alias logcat='adb logcat'
 alias adbtime='adb shell date $(date +%m%d%H%M%Y)'
 alias getcrash='adb logcat -d | grep "beginning of crash" -A 30'
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
