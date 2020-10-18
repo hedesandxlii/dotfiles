@@ -13,25 +13,44 @@ fi
 # Vim-mode for bash
 set -o vi
 
+export BROWSER='chromium'
 export EDITOR='vim'
+export TERMINAL='xterm'
+export TERM='xterm'
+
+RESET="\e[0m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+CYAN="\e[36m"
+RED="\e[31m"
+
+RESET_NOLEN="\[${RESET}\]"
+GREEN_NOLEN="\[${GREEN}\]"
+YELLOW_NOLEN="\[${YELLOW}\]"
+BLUE_NOLEN="\[${BLUE}\]"
+CYAN_NOLEN="\[${CYAN}\]"
+RED_NOLEN="\[${RED}\]"
 
 # Used to wrap text in color using escape codes and then adding that to PS1
 # $1 text to be wrapped
 # $2 color, string.
 add_to_PS1() {
-    reset="\[\e[0m\]"
     case $2 in
         green)
-            PS1+="\[\e[32m\]$1${reset}"
+            PS1+="${GREEN_NOLEN}$1${RESET_NOLEN}"
             ;;
         yellow)
-            PS1+="\[\e[33m\]$1${reset}"
+            PS1+="${YELLOW_NOLEN}$1${RESET_NOLEN}"
             ;;
         blue)
-            PS1+="\[\e[34m\]$1${reset}"
+            PS1+="${BLUE_NOLEN}$1${RESET_NOLEN}"
             ;;
         cyan)
-            PS1+="\[\e[36m\]$1${reset}"
+            PS1+="${CYAN_NOLEN}$1${RESET_NOLEN}"
+            ;;
+        red)
+            PS1+="${RED_NOLEN}$1${RESET_NOLEN}"
             ;;
         *)
             PS1+=$1
@@ -41,20 +60,19 @@ add_to_PS1() {
 
 set_my_PS1() {
     unset PS1
+    add_to_PS1 "[ " yellow
     add_to_PS1 "\u" green
-    add_to_PS1 "@"
-    add_to_PS1 "\h" cyan
-    add_to_PS1 ":"
+    add_to_PS1 " : "
     add_to_PS1 "\w" blue
-    add_to_PS1 " - "
-    if [ $VIM ]; then add_to_PS1 "[VIM :sh]" yellow; fi
+    add_to_PS1 " ] " yellow
     add_to_PS1 '[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]' green
+    [ $VIM ] && add_to_PS1 "[VIM :sh]" yellow
     add_to_PS1 "\n\$ "
 }
 set_my_PS1
 
 # Trim lenght of prompt.
-export PROMPT_DIRTRIM=2
+export PROMPT_DIRTRIM=4
 
 # Change title of window to current directory
 PROMPT_COMMAND_BASE="\033]0;$(whoami)@$(hostname) | $(dirs)"
@@ -69,7 +87,6 @@ alias naut='nautilus . > /dev/null &'
 alias :q='exit'
 alias chrome="chromium-browser"
 alias py="python3"
-alias tmux='tmux -2'
 
 # git aliases
 git config --global alias.co checkout
@@ -81,9 +98,13 @@ git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
 git config --global alias.magic 'push origin HEAD:refs/for/master'
 
-# Android development aliases
-alias emulator='~/Android/Sdk/emulator/emulator -avd $(~/Android/Sdk/emulator/emulator -list-avds | head -n 1) & '
-alias mCurrentFocus='adb shell dumpsys window windows | grep -E mCurrentFocus'
-alias logcat='adb logcat'
-alias adbtime='adb shell date $(date +%m%d%H%M%Y)'
-alias getcrash='adb logcat -d | grep "beginning of crash" -A 30'
+# 'dotfiles' status text
+echo -e "${GREEN}==${RESET} Status of dotfiles ${GREEN}==${RESET}"
+git_st=$(cd $DOTFILES_HOME; git st)
+cd - &> /dev/null
+if [ -n git_st ]; then
+    cd $DOTFILES_HOME
+    git status -sb
+    cd - &> /dev/null
+fi
+

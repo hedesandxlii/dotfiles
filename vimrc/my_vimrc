@@ -21,13 +21,20 @@ Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'gilgigilgil/anderson.vim'
-Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
-Plug 'nvie/vim-flake8'
-" Jedi-vim (Autocomplete for python)
-Plug 'davidhalter/jedi-vim'
-
+Plug 'tpope/vim-surround'
+Plug 'nvie/vim-flake8', { 'for': 'python' }
+" Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
+Plug 'TaDaa/vimade'
 call plug#end()
+
+""""""""""""""""
+" Colorscheme  "
+""""""""""""""""
+" colorscheme anderson
 
 filetype plugin on
 """"""""""""
@@ -36,27 +43,25 @@ filetype plugin on
 
 let mapleader = ","
 nnoremap <Leader><Space> :noh<CR>
-nnoremap ; :
 nnoremap <F8> :set number! relativenumber!<CR>
+nnoremap <Leader><Tab> :setlocal noet<CR>
+nnoremap Y y$
 
 " Movement
 nnoremap j gj
 nnoremap k gk
-nnoremap <tab> %
 
-" Movement between splits.
+" Movement between splits/buffers.
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+nnoremap <Leader>bh :bp<CR>
+nnoremap <Leader>bl :bn<CR>
 
-" Movement between buffers
-nnoremap <Leader>bn :bnext<CR>
-nnoremap <Leader>bp :bprevious<CR>
-
-" Resize vertical splits
-nnoremap <Leader>m :vertical resize -5<CR>
-nnoremap <Leader>p :vertical resize +5<CR>
+" Resize splits
+" nnoremap <C-p> :resize +5<CR>
+" nnoremap <C-m> :resize -5<CR>
 
 " Command mode with swedish keyboard layout
 nnoremap ö :
@@ -71,7 +76,7 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
 
 " vimrc
 map <Leader>sv :source $MYVIMRC<CR>
-map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
+map <Leader>ev :e $MYVIMRC<CR>
 
 
 """"""""""""
@@ -80,9 +85,10 @@ map <Leader>ev <C-w><C-v><C-w><C-l>:e $MYVIMRC<CR>
 
 " Formatting
 set wrap
-set textwidth=80
+set textwidth=100
 set formatoptions=qrn1
 set colorcolumn=+1
+set nowrap
 
 " Tabs
 set tabstop=4
@@ -94,10 +100,10 @@ set cindent
 set expandtab
 
 " Folds
-set foldmethod=indent
+set foldmethod=syntax
 set foldlevel=1
 set foldclose=all
-set foldnestmax=2
+set foldnestmax=1
 
 " Search
 set ignorecase
@@ -108,7 +114,9 @@ set hlsearch
 
 " Misc
 set hidden
-set scrolloff=10
+set splitbelow
+set splitright
+set scrolloff=5
 set visualbell
 set ttyfast
 set ruler
@@ -143,8 +151,18 @@ endif
 """""""""""""""""""
 autocmd FileType python nnoremap <leader>; <Esc>:w<CR>:!clear;python3 "%"<CR>
 autocmd FileType python nnoremap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
+autocmd FileType python set foldmethod=indent
 
-autocmd FileType markdown nnoremap <leader>o <Esc>:w<CR>:! $BROWSER %<CR>
+autocmd FileType markdown nnoremap <leader>; <Esc>:w<CR>:! $BROWSER %<CR>
+
+autocmd FileType c nnoremap <leader>; <Esc>:w<CR>:!clear && make<CR>
+autocmd FileType c inoremap <leader>print printf("\n");<Esc>F\i
+
+autocmd FileType sh nnoremap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
+
+" Post write hooks "
+
+" autocmd BufWritePost ~/repos/dotfiles/** !cd ~/repos/dotfiles; git ci -a --amend --no-edit;
 
 """"""""""""""""
 " Autocommands "
@@ -170,22 +188,27 @@ autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red ctermfg=black
 au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 au InsertLeave * match ExtraWhitespace /\s\+$/
 set ambiwidth=double
-set listchars=trail:.
+set showbreak=↪\
+
+" Listchars setting
+highligh SpecialKey ctermfg=DarkGrey
+set listchars=tab:↦\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
 set list
 
-""""""""""""""""
-" Colorscheme  "
-""""""""""""""""
-colorscheme anderson
 
 """""""""""""""""
 " Plugin Config "
 """""""""""""""""
 
+" vim surround
+nmap s <Plug>Ysurround
+nmap S <Plug>YSurround
+xmap s <Plug>VSurround
+xmap S <Plug>VgSurround
+
 " Nerdtree config
 map <C-t> :NERDTreeToggle<CR>" Toggle NerdTree with Ctrl+t
-
-let NERDTreeChDirMode  = 2  " Changes pwd with root-node change
+" let NERDTreeChDirMode  = 2  " Changes pwd with root-node change
 let NERDTRreeMinimalUI = 1
 let NERDTRreeDirArrows = 1
 let NERDTreeShowBookmarks = 1
@@ -194,37 +217,28 @@ let g:NERDTreeIndicatorMapCustom = {
     \ "Staged"    : "S",
     \ "Untracked" : "?",
     \ "Renamed"   : "➜",
-    \ "Unmerged"  : "Unmerged",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ 'Ignored'   : '☒',
+    \ "Unmerged"  : "U",
+    \ "Deleted"   : "D",
+    \ "Dirty"     : "",
+    \ "Clean"     : "",
+    \ 'Ignored'   : '',
     \ "Unknown"   : "?"
     \ }
-
-" YCM (not used)
-let g:ycm_python_binary_path = 'python3'
-let g:ycm_autoclose_preview_window_after_completion=1
-
-" Jedi vim
-set nowrap " signature tips are cancer without this.
-
-" Asyncrun
-let g:asyncrun_open = 6
-let $PYTHONUNBUFFERED=1
-
-" GitGutter
-set updatetime=500
-function! GitStatus()
-    let [a,m,r] = GitGutterGetHunkSummary()
-    return printf('+%d ~%d -%d', a, m, r)
-endfunction
-let g:gitgutter_sign_added = 'a'
-let g:gitgutter_sign_modified = 'm'
-let g:gitgutter_sign_removed = 'r'
-"let g:gitgutter_map_keys = 0
 
 " Airline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
+" YCM
+function EditYcmExtra()
+    edit  '~/.local/src/YCM/.ycm_extra_conf.py'
+endfunction
+let g:ycm_global_ycm_extra_conf = '~/.local/src/YCM/.ycm_extra_conf.py'
+nnoremap <leader>d   :YcmCompleter GoTo<CR>
+
+" FZF
+nnoremap <leader>f      :Files<CR>
+nnoremap <leader>t      :Tags<CR>
+nnoremap <leader>bt     :BTags<CR>
+" nnoremap <leader>b      :Buffers<CR>

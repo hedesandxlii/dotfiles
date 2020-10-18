@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+import filecmp
+import os
+import subprocess
+
+def print_help_and_exit():
+    print('This is an interactive bootstrapping script that symlinks to some config files.')
+    exit(0)
+
+def create_symlinks_interactive(path_target, path_linkname):
+    path_target = os.path.abspath(os.path.expanduser(path_target))
+    path_linkname = os.path.abspath(os.path.expanduser(path_linkname))
+    if (filecmp.cmp(path_target, path_linkname, shallow=False)):
+        print(f'Skipping "{path_target}" as it\'s equal to "{path_linkname}"')
+        return  # Files are equal, dont do anything.
+
+    usr_input = input(f'Do you want to symlink "{path_linkname}" -> "{path_target}" (y/n)?')
+    if (usr_input.lower().startswith('y')):
+        try:
+            os.makedirs(os.path.dirname(path_linkname))
+        except FileExistsError:
+            pass  # Don't really need to handle this.
+
+        try:
+            os.symlink(path_target, path_linkname)
+        except FileExistsError:
+            usr_input = input(f'"{path_linkname}" already exists. Do you want to replace it (y/n)?')
+            if (usr_input.lower().startswith('y')):
+                os.remove(path_linkname)
+                print(f'Replaced "{path_linkname}"')
+                os.symlink(path_target, path_linkname)
+            else:
+                print('Suit yourself.')
+    else:
+        print('Suit yourself.')
+
+def main():
+    # Assert execution from 'dotfiles'-directory.
+    this_d  = os.path.dirname(os.path.abspath(__file__))
+    cwd     = os.getcwd();
+    if (this_d != cwd):
+        print(f'You must execute this script from "{this_d}".')
+        exit(1)
+
+    # Create symlinks
+    LINKS = {
+        #relative target        linkname
+         './vimrc/my_vimrc':    '~/.vimrc',
+         './bashrc/my_bashrc':  '~/.bashrc',
+         './tmux/tmux.conf':    '~/.tmux/tmux.conf',
+    }
+    for t, ln in LINKS.items():
+        create_symlinks_interactive(t, ln)
+
+    # Add/replace env. variable to this directory
+    with open(os.path.expanduser('~/.bash_hostspecific'), 'r+') as file_obj:
+        lines = file_obj.readlines()
+        file_obj.seek(0)
+        should_replace = any(line.startswith('export DOTFILES_HOME') for line in lines)
+
+        for line in lines:
+            if not line.startswith('export DOTFILES_HOME'):
+                file_obj.write(line)
+            else:
+                file_obj.write(f'export DOTFILES_HOME={this_d}\n')
+
+        if not should_replace:
+            file_obj.write(f'export DOTFILES_HOME={this_d}\n')
+
+    # Install packages from apt.
+    apt_packages = ['curl', 'tmux', 'vim']
+    if input(f'Do you want to install {apt_packages} with apt (y/n)?').lower().startswith('y'):
+        subprocess.run(['sudo', 'apt', 'install', *apt_packages])
+
+if __name__ == '__main__':
+    main()

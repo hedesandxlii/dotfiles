@@ -74,9 +74,9 @@ bindsym $mod+a focus parent
 set $screenshot_location ~/Pictures/Screenshots/$(date +%Y%B%d_%H.%M.%S).png
 
 bindsym Print exec maim $screenshot_location
-# Super+print screenshots current window (-w)
+# Super+print screenshots current window (-i)
 bindsym $super+Print exec maim -i $(xdotool getactivewindow) $screenshot_location
-# Shift+print screenshots a user selected area (-a)
+# Shift+print screenshots a user selected area (-s)
 bindsym Shift+Print exec maim -s $screenshot_location
 
 # workspace definition
