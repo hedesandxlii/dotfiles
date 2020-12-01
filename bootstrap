@@ -10,9 +10,13 @@ def print_help_and_exit():
 def create_symlinks_interactive(path_target, path_linkname):
     path_target = os.path.abspath(os.path.expanduser(path_target))
     path_linkname = os.path.abspath(os.path.expanduser(path_linkname))
-    if (filecmp.cmp(path_target, path_linkname, shallow=False)):
-        print(f'Skipping "{path_target}" as it\'s equal to "{path_linkname}"')
-        return  # Files are equal, dont do anything.
+    try:
+        if (filecmp.cmp(path_target, path_linkname, shallow=False)):
+            print(f'Skipping "{path_target}" as it\'s equal to "{path_linkname}"')
+            return
+    except FileNotFoundError:
+        pass # We get here when `path_linkname` doesn't exist, we want to continue
+
 
     usr_input = input(f'Do you want to symlink "{path_linkname}" -> "{path_target}" (y/n)?')
     if (usr_input.lower().startswith('y')):
@@ -53,18 +57,23 @@ def main():
         create_symlinks_interactive(t, ln)
 
     # Add/replace env. variable to this directory
-    with open(os.path.expanduser('~/.bash_hostspecific'), 'r+') as file_obj:
-        lines = file_obj.readlines()
-        file_obj.seek(0)
-        should_replace = any(line.startswith('export DOTFILES_HOME') for line in lines)
+    bash_hs = os.path.expanduser('~/.bash_hostspecific')
+    if os.path.exists(bash_hs):
+        with open(bash_hs, 'r+') as file_obj:
+            lines = file_obj.readlines()
+            file_obj.seek(0)
+            should_replace = any(line.startswith('export DOTFILES_HOME') for line in lines)
 
-        for line in lines:
-            if not line.startswith('export DOTFILES_HOME'):
-                file_obj.write(line)
-            else:
+            for line in lines:
+                if not line.startswith('export DOTFILES_HOME'):
+                    file_obj.write(line)
+                else:
+                    file_obj.write(f'export DOTFILES_HOME={this_d}\n')
+
+            if not should_replace:
                 file_obj.write(f'export DOTFILES_HOME={this_d}\n')
-
-        if not should_replace:
+    else:
+        with open(bash_hs, 'a+') as file_obj:
             file_obj.write(f'export DOTFILES_HOME={this_d}\n')
 
     # Install packages from apt.
