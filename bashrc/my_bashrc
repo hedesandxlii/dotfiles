@@ -99,14 +99,14 @@ git config --global alias.lg 'log --oneline -n10'
 git config --global alias.magic 'push origin HEAD:refs/for/master'
 
 # 'dotfiles' status text
-echo -e "${GREEN}==${RESET} Status of dotfiles ${GREEN}==${RESET}"
-
 cd $DOTFILES_HOME;
 git_st=$(git st)
 git_ahead_behind=$(git rev-list --left-right --count origin/master...master \
     | awk '{ if ($1 > 0) print "ahead " $1; if ($2 > 0) print " behind " $2; }')
 cd - &> /dev/null
+
 if [ -n "$git_st" ] || [ -n "$git_ahead_behind" ]; then
+    echo -e "${GREEN}==${RESET} Status of dotfiles ${GREEN}==${RESET}"
     cd $DOTFILES_HOME
     git st  # Re-invoke to keep coloring
     echo $git_ahead_behind
