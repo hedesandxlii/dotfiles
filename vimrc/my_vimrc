@@ -2,6 +2,10 @@ set nocompatible
 set encoding=UTF-8
 set modelines=0
 
+""""""""""""""
+" Plug Setup "
+""""""""""""""
+
 " Automatically installs 'vim-plug' if it is not installed. (linux only)
 if has('unix')
     if empty(glob('~/.vim/autoload/plug.vim'))
@@ -11,41 +15,42 @@ if has('unix')
     endif
 endif
 
-if has('unix')
-    call plug#begin('~/.vim/plugged')
-else
-    " Windows land
-    call plug#begin('~/vimfiles/plugged')
-endif
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
+call plug#begin('~/.vim/plugged')
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'gilgigilgil/anderson.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
 Plug 'nvie/vim-flake8', { 'for': 'python' }
-" Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
-Plug 'TaDaa/vimade'
+Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 """"""""""""""""
 " Colorscheme  "
 """"""""""""""""
-colorscheme anderson
 
-filetype plugin on
+" Define highlight group
+highlight ExtraWhitespace ctermbg=red ctermfg=black
+match ExtraWhitespace /\s\+$/
+
+highlight OverLength ctermbg=red ctermfg=black
+2match OverLength /\%>100v.\+/
+
+" Work-around to make colorschemes not f highlighting up
+" autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red ctermfg=black
+" autocmd ColorScheme * highlight OverLength ctermbg=red ctermfg=black
+" Sensible matching when in/not in insert mode
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+
+
 """"""""""""
 " Mappings "
 """"""""""""
-
 let mapleader = ","
 nnoremap <Leader><Space> :noh<CR>
 nnoremap <F8> :set number! relativenumber!<CR>
-nnoremap <Leader><Tab> :setlocal noet<CR>
 nnoremap Y y$
 
 " Movement
@@ -60,15 +65,11 @@ nnoremap <C-l> <C-w>l
 nnoremap <Leader>bh :bp<CR>
 nnoremap <Leader>bl :bn<CR>
 
-" Resize splits
-" nnoremap <C-p> :resize +5<CR>
-" nnoremap <C-m> :resize -5<CR>
-
 " Command mode with swedish keyboard layout
 nnoremap ö :
 nnoremap Ö :
 
-" Open terminal with Ctrl+D (And then exit that with Ctrl+D aswell :D)
+" Open terminal with Ctrl+D (And then exit that with Ctrl+D aswell)
 nnoremap <C-d> :sh<CR>
 
 " Scroll through popup with tab
@@ -76,19 +77,17 @@ inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
 
 " vimrc
-map <Leader>sv :source $MYVIMRC<CR>
-map <Leader>ev :e $MYVIMRC<CR>
+nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Leader>ev :e $MYVIMRC<CR>
 
 
 """"""""""""
 " Settings "
 """"""""""""
-
 " Formatting
 set wrap
 set textwidth=100
 set formatoptions=qrn1
-set colorcolumn=+1
 set nowrap
 
 " Tabs
@@ -127,29 +126,15 @@ set number relativenumber
 set gdefault
 set autoread
 
-" Some workaround for weird chars in current line in vim82.
-let &t_TI = ""
-let &t_TE = ""
-
 " get rid those of nasty files
-if has('unix')
-    set undodir=/tmp//
-    set directory=/tmp//
-    set backupdir=/tmp//
-else
-    " Windows land
-    silent execute '!mkdir "'.$VIMRUNTIME.'/temp"'
-    silent execute '!del "'.$VIMRUNTIME.'/temp/*~"'
-
-    set undodir=$VIMRUNTIME/tmp//
-    set backupdir=$VIMRUNTIME/tmp//
-    set directory=$VIMRUNTIME/tmp//
-endif
+set undodir=/tmp//
+set directory=/tmp//
+set backupdir=/tmp//
 
 
-"""""""""""""""""""
-" File specifics ""
-"""""""""""""""""""
+""""""""""""""""""
+" File specifics "
+""""""""""""""""""
 autocmd FileType python nnoremap <leader>; <Esc>:w<CR>:!clear;python3 "%"<CR>
 autocmd FileType python nnoremap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
 autocmd FileType python set foldmethod=indent
@@ -161,9 +146,6 @@ autocmd FileType c inoremap <leader>print printf("\n");<Esc>F\i
 
 autocmd FileType sh nnoremap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
 
-" Post write hooks "
-
-" autocmd BufWritePost ~/repos/dotfiles/** !cd ~/repos/dotfiles; git ci -a --amend --no-edit;
 
 """"""""""""""""
 " Autocommands "
@@ -171,28 +153,11 @@ autocmd FileType sh nnoremap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
 autocmd FocusLost * :wa
 autocmd BufEnter :syntax sync fromstart
 
-" Fixes cursor on exit and leave.
-autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
-autocmd VimLeave * silent exec "! echo -ne '\e[5 q'"
-
-augroup vimrc
-  " Remove all vimrc autocommands
-  autocmd!
-  " Add them again
-  au BufReadPre * setlocal foldmethod=indent
-  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
-augroup END
-
-" Define highlight for trailing whitespace
-highlight ExtraWhitespace ctermbg=red ctermfg=black
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red ctermfg=black
-au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-au InsertLeave * match ExtraWhitespace /\s\+$/
 set ambiwidth=double
-set showbreak=↪\
 
 " Listchars setting
 highligh SpecialKey ctermfg=DarkGrey
+set showbreak=↪\
 set listchars=tab:↦\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
 set list
 
@@ -207,25 +172,6 @@ nmap S <Plug>YSurround
 xmap s <Plug>VSurround
 xmap S <Plug>VgSurround
 
-" Nerdtree config
-map <C-t> :NERDTreeToggle<CR>" Toggle NerdTree with Ctrl+t
-" let NERDTreeChDirMode  = 2  " Changes pwd with root-node change
-let NERDTRreeMinimalUI = 1
-let NERDTRreeDirArrows = 1
-let NERDTreeShowBookmarks = 1
-let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "M",
-    \ "Staged"    : "S",
-    \ "Untracked" : "?",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "U",
-    \ "Deleted"   : "D",
-    \ "Dirty"     : "",
-    \ "Clean"     : "",
-    \ 'Ignored'   : '',
-    \ "Unknown"   : "?"
-    \ }
-
 " Airline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
@@ -239,7 +185,13 @@ let g:ycm_global_ycm_extra_conf = '~/.local/src/YCM/.ycm_extra_conf.py'
 nnoremap <leader>d   :YcmCompleter GoTo<CR>
 
 " FZF
+let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
 nnoremap <leader>f      :Files<CR>
 nnoremap <leader>t      :Tags<CR>
 nnoremap <leader>bt     :BTags<CR>
-" nnoremap <leader>b      :Buffers<CR>
+
+" GitGutter
+highlight SignColumn ctermbg=black
+highlight GitGutterAdd ctermfg=DarkGreen
+highlight GitGutterChange ctermfg=DarkYellow
+highlight GitGutterDelete ctermfg=DarkRed
