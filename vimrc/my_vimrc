@@ -26,9 +26,9 @@ Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
 Plug 'airblade/vim-gitgutter'
 call plug#end()
 
-""""""""""""""""
-" Colorscheme  "
-""""""""""""""""
+""""""""""
+" Colors "
+""""""""""
 
 " Define highlight group
 highlight ExtraWhitespace ctermbg=red ctermfg=black
@@ -37,13 +37,13 @@ match ExtraWhitespace /\s\+$/
 highlight OverLength ctermbg=red ctermfg=black
 2match OverLength /\%>100v.\+/
 
-" Work-around to make colorschemes not f highlighting up
-" autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red ctermfg=black
-" autocmd ColorScheme * highlight OverLength ctermbg=red ctermfg=black
 " Sensible matching when in/not in insert mode
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 
+set cursorline
+highlight clear CursorLine
+highlight CursorLineNR cterm=NONE ctermfg=white
 
 """"""""""""
 " Mappings "
@@ -155,7 +155,7 @@ autocmd BufEnter :syntax sync fromstart
 set ambiwidth=double
 
 " Listchars setting
-highligh SpecialKey ctermfg=DarkGrey
+highlight SpecialKey ctermfg=DarkGrey
 set showbreak=↪\
 set listchars=tab:↦\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
 set list
@@ -194,3 +194,4 @@ highlight SignColumn ctermbg=black
 highlight GitGutterAdd ctermfg=DarkGreen
 highlight GitGutterChange ctermfg=DarkYellow
 highlight GitGutterDelete ctermfg=DarkRed
+nmap <Leader>hv <Plug>(GitGutterPreviewHunk)
