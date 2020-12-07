@@ -23,6 +23,7 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'gilgigilgil/anderson.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 " Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -34,7 +35,7 @@ call plug#end()
 """"""""""""""""
 " Colorscheme  "
 """"""""""""""""
-" colorscheme anderson
+colorscheme anderson
 
 filetype plugin on
 """"""""""""
@@ -232,7 +233,7 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " YCM
 function EditYcmExtra()
-    edit  '~/.local/src/YCM/.ycm_extra_conf.py'
+    edit '~/.local/src/YCM/.ycm_extra_conf.py'
 endfunction
 let g:ycm_global_ycm_extra_conf = '~/.local/src/YCM/.ycm_extra_conf.py'
 nnoremap <leader>d   :YcmCompleter GoTo<CR>
