@@ -85,7 +85,6 @@ nnoremap <Leader>ev :e $MYVIMRC<CR>
 " Settings "
 """"""""""""
 " Formatting
-set wrap
 set textwidth=100
 set formatoptions=qrn1
 set nowrap
