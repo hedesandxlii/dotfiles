@@ -1,4 +1,9 @@
 set nocompatible
+syntax enable
+syntax on
+filetype plugin on
+filetype indent on
+
 set encoding=UTF-8
 set modelines=0
 
@@ -24,11 +29,14 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
 Plug 'airblade/vim-gitgutter'
+Plug 'iiey/vimcolors'
 call plug#end()
+
 
 """"""""""
 " Colors "
 """"""""""
+colorscheme lucario
 
 " Define highlight group
 highlight ExtraWhitespace ctermbg=red ctermfg=black
@@ -44,6 +52,7 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 set cursorline
 highlight clear CursorLine
 highlight CursorLineNR cterm=NONE ctermfg=white
+
 
 """"""""""""
 " Mappings "
@@ -191,7 +200,10 @@ nnoremap <leader>bt     :BTags<CR>
 
 " GitGutter
 highlight SignColumn ctermbg=black
-highlight GitGutterAdd ctermfg=DarkGreen
-highlight GitGutterChange ctermfg=DarkYellow
-highlight GitGutterDelete ctermfg=DarkRed
+highlight GitGutterAdd ctermfg=DarkGreen ctermbg=black
+highlight GitGutterChange ctermfg=DarkYellow ctermbg=black
+highlight GitGutterDelete ctermfg=DarkRed ctermbg=black
 nmap <Leader>hv <Plug>(GitGutterPreviewHunk)
+" visually shows weird chars. this is the fix
+set t_TI=
+set t_TE=
