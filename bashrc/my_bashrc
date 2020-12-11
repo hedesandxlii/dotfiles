@@ -15,8 +15,6 @@ set -o vi
 
 export BROWSER='chromium'
 export EDITOR='vim'
-export TERMINAL='xterm'
-export TERM='xterm'
 
 RESET="\e[0m"
 GREEN="\e[32m"
