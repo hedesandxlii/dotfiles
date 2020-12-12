@@ -76,6 +76,10 @@ def main():
         with open(bash_hs, 'a+') as file_obj:
             file_obj.write(f'export DOTFILES_HOME={this_d}\n')
 
+    if input(f'Do you want to add ppa:jonathonf/vim for vim 8.2 (y/n)?').lower().startswith('y'):
+        subprocess.run(['sudo', 'add-apt-repository', 'ppa:jonathonf/vim'])
+        subprocess.run(['sudo', 'apt', 'update'])
+
     # Install packages from apt.
     apt_packages = ['curl', 'tmux', 'vim']
     if input(f'Do you want to install {apt_packages} with apt (y/n)?').lower().startswith('y'):
