@@ -48,21 +48,22 @@ colorscheme gruvbox
 set background=dark
 
 " Define highlight group
-if 0 
-    highlight ExtraWhitespace ctermbg=red ctermfg=black " extra whitespace =             
-    highlight OverLength ctermbg=red ctermfg=black      " over length = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    match ExtraWhitespace /\s\+$/
-    2match OverLength /\%>100v.\+/
+highlight ExtraWhitespace ctermbg=red ctermfg=black " extra whitespace =             
+highlight OverLength ctermbg=red ctermfg=black      " over length = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+match ExtraWhitespace /\s\+$/
+2match OverLength /\%>100v.\+/
+augroup ewol
+    autocmd!
     autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
     autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-    set cursorline
-    highlight clear CursorLine
-    highlight CursorLineNR cterm=NONE ctermfg=white
+augroup END
+set cursorline
+highlight clear CursorLine
+highlight CursorLineNR cterm=NONE ctermfg=white
 
-    " Listchars setting
-    highlight SpecialKey ctermfg=DarkGrey
-    set listchars=tab:↦\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
-endif
+" Listchars setting
+highlight SpecialKey ctermfg=DarkGrey
+set listchars=tab:↦\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
 
 "=== Mappings ==="
 let mapleader = ","
@@ -85,13 +86,17 @@ nnoremap <Leader>ev :e $MYVIMRC<CR>
 
 
 "=== File specifics autocommands ==="
-autocmd FileType python nnoremap <leader>; <Esc>:w<CR>:!clear;python3 "%"<CR>
-autocmd FileType python nnoremap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
-autocmd FileType python set foldmethod=indent
-autocmd FileType markdown nnoremap <leader>; <Esc>:w<CR>:! $BROWSER %<CR>
-autocmd FileType c nnoremap <leader>; <Esc>:w<CR>:!clear && make<CR>
-autocmd FileType c inoremap <leader>print printf("\n");<Esc>F\i
-autocmd FileType sh nnoremap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
+autocmd BufEnter * let &ft = &ft
+augroup filetype_autocommands
+    autocmd! FileType
+    autocmd FileType python nmap <leader>; <Esc>:w<CR>:!clear;python3 "%"<CR>
+    autocmd FileType python nmap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
+    autocmd FileType python set foldmethod=indent
+    autocmd FileType markdown nmap <leader>; <Esc>:w<CR>:! $BROWSER %<CR>
+    autocmd FileType c nmap <leader>; <Esc>:w<CR>:!clear && make<CR>
+    autocmd FileType c imap <leader>print printf("\n");<Esc>F\i
+    autocmd FileType sh nmap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
+augroup END
 
 
 "=== Plugin Config ==="
