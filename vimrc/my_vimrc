@@ -81,6 +81,10 @@ nnoremap <Leader>bl :bn<CR>
 nnoremap <C-d> :sh<CR>  " terminal with Ctrl-D
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
+" FIXME: duplicated code here. Could create an [in]noremap?
+nnoremap <Space><Space> <Esc>/<++><CR>c4l
+inoremap <Space><Space> <Esc>/<++><CR>c4l
+
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 nnoremap <Leader>ev :e $MYVIMRC<CR>
 
@@ -91,6 +95,7 @@ augroup filetype_autocommands
     autocmd! FileType
     autocmd FileType python nmap <leader>; <Esc>:w<CR>:!clear;python3 "%"<CR>
     autocmd FileType python nmap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
+    autocmd FileType python nmap <leader>gd 2o'''<Esc>O:param <++>: <++><CR>:returns: <++><Esc>2k
     autocmd FileType python set foldmethod=indent
     autocmd FileType markdown nmap <leader>; <Esc>:w<CR>:! $BROWSER %<CR>
     autocmd FileType c nmap <leader>; <Esc>:w<CR>:!clear && make<CR>
