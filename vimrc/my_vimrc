@@ -10,9 +10,10 @@ set expandtab
 set smartindent
 set number relativenumber
 set nowrap
-set smartcase
+set smartcase ignorecase
 set scrolloff=5
 set nofoldenable
+set incsearch
 
 " Misc
 set hidden
@@ -40,7 +41,6 @@ Plug 'junegunn/fzf.vim'
 Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
 Plug 'airblade/vim-gitgutter'
 Plug 'flazz/vim-colorschemes'
-Plug 'qualiabyte/vim-colorstepper'
 call plug#end()
 
 "=== Colors ==="
@@ -48,10 +48,10 @@ colorscheme gruvbox
 set background=dark
 
 " Define highlight group
-highlight ExtraWhitespace ctermbg=red ctermfg=black " extra whitespace =             
-highlight OverLength ctermbg=red ctermfg=black      " over length = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+highlight ExtraWhitespace ctermbg=red ctermfg=black " extra whitespace =        
+highlight OverLength ctermbg=red ctermfg=black      " over length = aaaaaaaaaaaaaaa
 match ExtraWhitespace /\s\+$/
-2match OverLength /\%>100v.\+/
+2match OverLength /\%>80v.\+/
 augroup ewol
     autocmd!
     autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
@@ -64,6 +64,7 @@ highlight CursorLineNR cterm=NONE ctermfg=white
 " Listchars setting
 highlight SpecialKey ctermfg=DarkGrey
 set listchars=tab:↦\ ,nbsp:␣,trail:·,extends:⟩,precedes:⟨
+set list
 
 "=== Mappings ==="
 let mapleader = ","
@@ -115,6 +116,12 @@ xmap S <Plug>VgSurround
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline_section_b = '' " Disable hunk preview
+let g:airline_section_y = '' " Disable file encoding preview
+let g:airline_section_z = '' " Disable position in file.
+let g:airline#extensions#default#section_truncate_width = {}
+
+let g:airline#extensions#default#layout = [[ 'a', 'c' ], [ 'error', 'warning' ]]
 
 " YCM
 let g:ycm_global_ycm_extra_conf = '~/.local/src/YCM/.ycm_extra_conf.py'
@@ -131,8 +138,3 @@ nnoremap <Leader>hv <Plug>(GitGutterPreviewHunk)
 " visually shows weird chars. this is the fix for that
 set t_TI=
 set t_TE=
-
-" colorstepper
-nmap <F6> <Plug>ColorstepPrev
-nmap <F7> <Plug>ColorstepNext
-nmap <S-F7> <Plug>ColorstepReload
