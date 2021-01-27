@@ -41,6 +41,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
 Plug 'airblade/vim-gitgutter'
 Plug 'flazz/vim-colorschemes'
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 "=== Colors ==="
@@ -68,7 +69,6 @@ set list
 
 "=== Mappings ==="
 let mapleader = ","
-nnoremap <Leader><Space> :noh<CR>
 nnoremap <F8> :set number! relativenumber!<CR>
 nnoremap Y y$
 nnoremap j gj
@@ -77,17 +77,14 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <Leader>bh :bp<CR>
-nnoremap <Leader>bl :bn<CR>
+nnoremap <leader>bh :bp<CR>
+nnoremap <leader>bl :bn<CR>
 nnoremap <C-d> :sh<CR>  " terminal with Ctrl-D
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
-" FIXME: duplicated code here. Could create an [in]noremap?
-nnoremap <Space><Space> <Esc>/<++><CR>c4l
-inoremap <Space><Space> <Esc>/<++><CR>c4l
 
-nnoremap <Leader>sv :source $MYVIMRC<CR>
-nnoremap <Leader>ev :e $MYVIMRC<CR>
+nnoremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>ev :e $MYVIMRC<CR>
 
 
 "=== File specifics autocommands ==="
@@ -96,11 +93,13 @@ augroup filetype_autocommands
     autocmd! FileType
     autocmd FileType python nmap <leader>; <Esc>:w<CR>:!clear;python3 "%"<CR>
     autocmd FileType python nmap <leader>t <Esc>:w<CR>:!clear;mypy %<CR>
-    autocmd FileType python nmap <leader>gd 2o'''<Esc>O:param <++>: <++><CR>:returns: <++><Esc>2k
-    autocmd FileType python set foldmethod=indent
     autocmd FileType markdown nmap <leader>; <Esc>:w<CR>:! $BROWSER %<CR>
     autocmd FileType c nmap <leader>; <Esc>:w<CR>:!clear && make<CR>
     autocmd FileType c imap <leader>print printf("\n");<Esc>F\i
+    autocmd FileType cpp nmap <leader>;
+        \ <Esc>:w<CR>:!clear &&
+        \ g++ -Wall -Wextra -pedantic -std=c++11 "%";
+        \ [ -f ./a.out ] && ./a.out && rm ./a.out<CR>
     autocmd FileType sh nmap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
 augroup END
 
@@ -134,7 +133,7 @@ nnoremap <leader>t      :Tags<CR>
 nnoremap <leader>bt     :BTags<CR>
 
 " GitGutter
-nnoremap <Leader>hv <Plug>(GitGutterPreviewHunk)
+nnoremap <leader>hv <Plug>(GitGutterPreviewHunk)
 " visually shows weird chars. this is the fix for that
 set t_TI=
 set t_TE=
