@@ -2,61 +2,63 @@
 import filecmp
 import os
 import subprocess
+from termcolor import colored
+
 
 def print_help_and_exit():
     print('This is an interactive bootstrapping script that symlinks to some config files.')
     exit(0)
 
-def create_symlinks_interactive(path_target, path_linkname):
+
+def highlight(string):
+    return colored(string, attrs=['bold', 'underline'])
+
+
+def warning(string):
+    return colored(string, 'white', 'on_yellow', attrs=['bold'])
+
+
+def good(string):
+    return colored(string, 'green', attrs=['bold'])
+
+
+def note():
+    return colored('Note:', 'cyan', attrs=['bold'])
+
+
+def create_symlinks(path_target, path_linkname):
     path_target = os.path.abspath(os.path.expanduser(path_target))
     path_linkname = os.path.abspath(os.path.expanduser(path_linkname))
-    try:
-        if (filecmp.cmp(path_target, path_linkname, shallow=False)):
-            print(f'Skipping "{path_target}" as it\'s equal to "{path_linkname}"')
+    current_file = os.path.basename(path_target)
+    print('Processing', highlight(current_file), '...')
+    
+    if not os.path.exists(path_target):
+        print(' ', warning('Target for link does not exist:'), f'\n\t{path_target}')
+        return
+
+    if os.path.exists(path_linkname):
+        # check if target & linkname are already linked:
+        if os.path.islink(path_linkname) and os.readlink(path_linkname) == path_target:
+            print(' ', highlight(current_file), good(' is already completely linked'))
             return
-    except FileNotFoundError:
-        pass # We get here when `path_linkname` doesn't exist, we want to continue
 
-
-    usr_input = input(f'Do you want to symlink "{path_linkname}" -> "{path_target}" (y/n)?')
-    if (usr_input.lower().startswith('y')):
-        try:
-            os.makedirs(os.path.dirname(path_linkname))
-        except FileExistsError:
-            pass  # Don't really need to handle this.
-
-        try:
+        # if the files are equal, it should be safe to overwrite path_linkname
+        # by linking.
+        if (filecmp.cmp(path_target, path_linkname, shallow=False)):
+            print(' ', warning('Overwriting'), current_file, 'as contents where exactly the same.')
+            os.remove(path_linkname)
             os.symlink(path_target, path_linkname)
-        except FileExistsError:
-            usr_input = input(f'"{path_linkname}" already exists. Do you want to replace it (y/n)?')
-            if (usr_input.lower().startswith('y')):
-                os.remove(path_linkname)
-                print(f'Replaced "{path_linkname}"')
-                os.symlink(path_target, path_linkname)
-            else:
-                print('Suit yourself.')
+            return
+        
+        print(' ', warning('Nothing will be done for'), highlight(current_file))
+        print(' ', note(), 'you need to resolve differances in already present files.')
     else:
-        print('Suit yourself.')
+        print(' ', 'No file at ', highlight(path_linkname), 'linking inbound!')
+        os.makedirs(os.path.dirname(path_linkname), exist_ok=True)
+        os.symlink(path_target, path_linkname)
+    
 
-def main():
-    # Assert execution from 'dotfiles'-directory.
-    this_d  = os.path.dirname(os.path.abspath(__file__))
-    cwd     = os.getcwd();
-    if (this_d != cwd):
-        print(f'You must execute this script from "{this_d}".')
-        exit(1)
-
-    # Create symlinks
-    LINKS = {
-        #relative target        linkname
-         './vimrc/my_vimrc':    '~/.vimrc',
-         './bashrc/my_bashrc':  '~/.bashrc',
-         './tmux/tmux.conf':    '~/.tmux/tmux.conf',
-    }
-    for t, ln in LINKS.items():
-        create_symlinks_interactive(t, ln)
-
-    # Add/replace env. variable to this directory
+def update_dotfiles_home_env(this_d):
     bash_hs = os.path.expanduser('~/.bash_hostspecific')
     if os.path.exists(bash_hs):
         with open(bash_hs, 'r+') as file_obj:
@@ -76,12 +78,74 @@ def main():
         with open(bash_hs, 'a+') as file_obj:
             file_obj.write(f'export DOTFILES_HOME={this_d}\n')
 
-    if input(f'Do you want to add ppa:jonathonf/vim for vim 8.2 (y/n)?').lower().startswith('y'):
-        subprocess.run(['sudo', 'add-apt-repository', 'ppa:jonathonf/vim'])
-        subprocess.run(['sudo', 'apt', 'update'])
 
-    # Install packages from apt.
-    apt_packages = ['curl', 'tmux', 'vim']
+def clone_install_github(gh_url, folder_name, parent_folder_path, *install_cmds):
+    clone_path = parent_folder_path + '/' + folder_name
+
+    if os.path.exists(clone_path):
+        print(highlight(clone_path) + ' already exists. Wont try to pull.')
+        return
+
+    if not os.path.exists(parent_folder_path):
+        print('Creating parent folder at ' + highlight(parent_folder_path))
+        subprocess.run((f'mkdir -p {parent_folder_path}').split(' '))
+
+    # Clone to a folder in the parent folder.
+    print('Cloning ' + highlight(gh_url) + ' to ' + highlight(clone_path))
+    subprocess.run((f'git clone {gh_url} {clone_path}').split(' '))
+
+    # run install commands
+    print('Running install commands:')
+    for cmd in install_cmds:
+        print('\t' + highlight(cmd))
+    for cmd in install_cmds:
+        subprocess.run(cmd.split(' '), cwd=clone_path)
+    
+
+def main():
+    # Assert execution from 'dotfiles'-directory.
+    this_d  = os.path.dirname(os.path.abspath(__file__))
+    cwd     = os.getcwd();
+    if (this_d != cwd):
+        print(f'You must execute this script from "{this_d}".')
+        exit(1)
+
+    # Create symlinks
+    LINKS = {
+        #relative target        linkname
+         './vimrc/my_vimrc':    '~/.vimrc',
+         './bashrc/my_bashrc':  '~/.bashrc',
+         './tmux/tmux.conf':    '~/.tmux/tmux.conf',
+         './nvim/init.vim':     '~/.config/nvim/init.vim',
+         './nvim/coc-settings.json':            '~/.config/nvim/coc-settings.json',
+         './nvim/coc_example_vim_cfg.vim':      '~/.config/nvim/coc_example_vim_cfg.vim',
+    }
+    for t, ln in LINKS.items():
+        create_symlinks(t, ln)
+
+    # fix DOTFILES_HOME
+    update_dotfiles_home_env(this_d)
+
+    # install latest NeoVim
+    if input(f'Do you want to install and build NeoVim?').lower().startswith('y'):
+        NVIM_GITHUB = 'https://github.com/neovim/neovim.git'
+        path_raw = input('Specify the folder to clone to (e.g.: ~/repos):') or '~/repos'
+        path = os.path.expanduser(path_raw)
+
+        clone_install_github(
+            NVIM_GITHUB,
+            'neovim',
+            path,
+            'make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install',
+        )
+
+    # Install packages using pip3
+    pip_packages = ['jedi-language-server']
+    if input(f'Do you want to install {pip_packages} with pip (y/n)?').lower().startswith('y'):
+        subprocess.run(['pip3', 'install', '-U', *pip_packages])
+
+    # Install packages using apt
+    apt_packages = ['curl', 'tmux']
     if input(f'Do you want to install {apt_packages} with apt (y/n)?').lower().startswith('y'):
         subprocess.run(['sudo', 'apt', 'install', *apt_packages])
 

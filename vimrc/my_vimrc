@@ -1,6 +1,6 @@
 set nocompatible
 syntax on
-filetype plugin indent on
+filetype plugin on
 
 "=== Settings ==="
 set noerrorbells
@@ -18,6 +18,7 @@ set incsearch
 " Misc
 set hidden
 set ttyfast
+set updatetime=50
 set nobackup
 set noswapfile
 set undofile
@@ -38,10 +39,10 @@ Plug 'tpope/vim-surround'
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c'] }
+Plug 'ycm-core/YouCompleteMe', { 'for': ['python', 'c', 'cpp'] }
 Plug 'airblade/vim-gitgutter'
-Plug 'flazz/vim-colorschemes'
-Plug 'jiangmiao/auto-pairs'
+Plug 'gruvbox-community/gruvbox'
+" Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 "=== Colors ==="
@@ -98,8 +99,8 @@ augroup filetype_autocommands
     autocmd FileType c imap <leader>print printf("\n");<Esc>F\i
     autocmd FileType cpp nmap <leader>;
         \ <Esc>:w<CR>:!clear &&
-        \ g++ -Wall -Wextra -pedantic -std=c++11 "%";
-        \ [ -f ./a.out ] && ./a.out && rm ./a.out<CR>
+        \ make -B "%:r" &&
+        \ ./"%:r"<CR>
     autocmd FileType sh nmap <leader>; <Esc>:w<CR>:!clear && ./"%"<CR>
 augroup END
 
@@ -117,10 +118,10 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline_section_b = '' " Disable hunk preview
 let g:airline_section_y = '' " Disable file encoding preview
-let g:airline_section_z = '' " Disable position in file.
+" "let g:airline_section_z = '' " Disable position in file.
 let g:airline#extensions#default#section_truncate_width = {}
 
-let g:airline#extensions#default#layout = [[ 'a', 'c' ], [ 'error', 'warning' ]]
+let g:airline#extensions#default#layout = [[ 'a', 'c' ], [ 'z', 'error', 'warning' ]]
 
 " YCM
 let g:ycm_global_ycm_extra_conf = '~/.local/src/YCM/.ycm_extra_conf.py'
@@ -129,6 +130,7 @@ nnoremap <leader>d :YcmCompleter GoTo<CR>
 " FZF
 let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
 nnoremap <leader>f      :Files<CR>
+nnoremap <leader>g      :Rg<CR>
 nnoremap <leader>t      :Tags<CR>
 nnoremap <leader>bt     :BTags<CR>
 
