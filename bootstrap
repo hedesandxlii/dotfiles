@@ -79,7 +79,7 @@ def update_dotfiles_home_env(this_d):
             file_obj.write(f'export DOTFILES_HOME={this_d}\n')
 
 
-def clone_install_github(gh_url, folder_name, parent_folder_path, *install_cmds):
+def clone_install_github(gh_url, folder_name, parent_folder_path, prereqs, install_cmds):
     clone_path = parent_folder_path + '/' + folder_name
 
     if os.path.exists(clone_path):
@@ -89,10 +89,12 @@ def clone_install_github(gh_url, folder_name, parent_folder_path, *install_cmds)
     if not os.path.exists(parent_folder_path):
         print('Creating parent folder at ' + highlight(parent_folder_path))
         subprocess.run((f'mkdir -p {parent_folder_path}').split(' '))
-
     # Clone to a folder in the parent folder.
     print('Cloning ' + highlight(gh_url) + ' to ' + highlight(clone_path))
     subprocess.run((f'git clone {gh_url} {clone_path}').split(' '))
+
+    print('Installing prerequisites with apt')
+    subprocess.run((f'sudo apt install {prereqs}').split(' '))
 
     # run install commands
     print('Running install commands:')
@@ -100,7 +102,7 @@ def clone_install_github(gh_url, folder_name, parent_folder_path, *install_cmds)
         print('\t' + highlight(cmd))
     for cmd in install_cmds:
         subprocess.run(cmd.split(' '), cwd=clone_path)
-    
+
 
 def main():
     # Assert execution from 'dotfiles'-directory.
@@ -133,10 +135,11 @@ def main():
         path = os.path.expanduser(path_raw)
 
         clone_install_github(
-            NVIM_GITHUB,
-            'neovim',
-            path,
-            'make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install',
+            gh_url=NVIM_GITHUB,
+            folder_name='neovim',
+            parent_folder_path=path,
+            prereqs='ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip',
+            install_cmds=['make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install'],
         )
 
     # Install packages using pip3
