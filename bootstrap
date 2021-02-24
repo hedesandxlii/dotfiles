@@ -2,6 +2,8 @@
 import filecmp
 import os
 import subprocess
+
+from pathlib import Path
 from termcolor import colored
 
 
@@ -9,24 +11,29 @@ def print_help_and_exit():
     print('This is an interactive bootstrapping script that symlinks to some config files.')
     exit(0)
 
+# pretty colors :)
+def highlight(string):  return colored(string, attrs=['bold', 'underline'])
+def warning(string):    return colored(string, 'yellow', attrs=['bold'])
+def good(string):       return colored(string, 'green', attrs=['bold'])
+def note():             return colored('Note:', 'cyan', attrs=['bold'])
+def print_subsection(*args):
+    string = ' '.join(args)
+    string = ' ' + string + ' '
+    print(('-'*10) + (string.ljust(70, '-')))
 
-def highlight(string):
-    return colored(string, attrs=['bold', 'underline'])
+def section_print(title):
+    def decorator(function):
+        def wrapper(*args, **kwargs):
+            print('='*80)
+            print(' '*20, title)
+            print('='*80)
+            function(*args, **kwargs)
+            print()
+        return wrapper
+    return decorator
 
 
-def warning(string):
-    return colored(string, 'white', 'on_yellow', attrs=['bold'])
-
-
-def good(string):
-    return colored(string, 'green', attrs=['bold'])
-
-
-def note():
-    return colored('Note:', 'cyan', attrs=['bold'])
-
-
-def create_symlinks(path_target, path_linkname):
+def create_symlink(path_target, path_linkname):
     path_target = os.path.abspath(os.path.expanduser(path_target))
     path_linkname = os.path.abspath(os.path.expanduser(path_linkname))
     current_file = os.path.basename(path_target)
@@ -39,7 +46,7 @@ def create_symlinks(path_target, path_linkname):
     if os.path.exists(path_linkname):
         # check if target & linkname are already linked:
         if os.path.islink(path_linkname) and os.readlink(path_linkname) == path_target:
-            print(' ', highlight(current_file), good(' is already completely linked'))
+            print(' ', highlight(current_file), good('is already completely linked'))
             return
 
         # if the files are equal, it should be safe to overwrite path_linkname
@@ -56,42 +63,52 @@ def create_symlinks(path_target, path_linkname):
         print(' ', 'No file at ', highlight(path_linkname), 'linking inbound!')
         os.makedirs(os.path.dirname(path_linkname), exist_ok=True)
         os.symlink(path_target, path_linkname)
+
+
+@section_print(title='Symlinking dotfiles')
+def create_symlinks(symlink_dict):
+    for t, ln in symlink_dict.items():
+        create_symlink(t, ln)
     
 
+@section_print(title='Updating ' + highlight('bash_hostspecific'))
 def update_dotfiles_home_env(this_d):
-    bash_hs = os.path.expanduser('~/.bash_hostspecific')
-    if os.path.exists(bash_hs):
+    bash_hs = Path('~/.bash_hostspecific').expanduser()
+    if bash_hs.exists():
         with open(bash_hs, 'r+') as file_obj:
             lines = file_obj.readlines()
             file_obj.seek(0)
-            should_replace = any(line.startswith('export DOTFILES_HOME') for line in lines)
+            found_line = False
 
             for line in lines:
                 if not line.startswith('export DOTFILES_HOME'):
                     file_obj.write(line)
                 else:
+                    found_line = True
                     file_obj.write(f'export DOTFILES_HOME={this_d}\n')
+                    print('Updated already present definition ...')
 
-            if not should_replace:
+            if not found_line:
                 file_obj.write(f'export DOTFILES_HOME={this_d}\n')
     else:
+        print(highlight('~/..bash_hostspecific'), 'does not exists...')
+        print('Creating it and adding DOTFILES_HOME definition')
         with open(bash_hs, 'a+') as file_obj:
             file_obj.write(f'export DOTFILES_HOME={this_d}\n')
 
-
-def clone_install_github(gh_url, folder_name, parent_folder_path, prereqs, install_cmds):
-    clone_path = parent_folder_path + '/' + folder_name
-
-    if os.path.exists(clone_path):
-        print(highlight(clone_path) + ' already exists. Wont try to pull.')
+def clone_install_github(github_url, clone_path, apt_prereqs, install_cmds):
+    clone_path = Path(clone_path)
+    if clone_path.exists():
+        print(highlight(clone_path), warning('already exists.'), 'Will not try to clone.')
         return
 
-    if not os.path.exists(parent_folder_path):
-        print('Creating parent folder at ' + highlight(parent_folder_path))
-        subprocess.run((f'mkdir -p {parent_folder_path}').split(' '))
+    if not clone_path.parent.exists():
+        print('Creating parent folder at ' + highlight(clone_path.parent))
+        subprocess.run((f'mkdir -p {clone_path.parent}').split(' '))
+
     # Clone to a folder in the parent folder.
-    print('Cloning ' + highlight(gh_url) + ' to ' + highlight(clone_path))
-    subprocess.run((f'git clone {gh_url} {clone_path}').split(' '))
+    print('Cloning ' + highlight(github_url) + ' to ' + highlight(clone_path))
+    subprocess.run((f'git clone {github_url} {clone_path}').split(' '))
 
     print('Installing prerequisites with apt')
     subprocess.run((f'sudo apt install {prereqs}').split(' '))
@@ -103,16 +120,29 @@ def clone_install_github(gh_url, folder_name, parent_folder_path, prereqs, insta
     for cmd in install_cmds:
         subprocess.run(cmd.split(' '), cwd=clone_path)
 
+@section_print(title='Installing deps')
+def install_deps(deps_dict):
+    for github_dep in deps_dict['github'].values():
+        print_subsection('Installing', highlight(github_dep['github_url']))
+        clone_install_github(**github_dep)
+        print()
+
+    print_subsection(highlight('Installing with pip3:'), *deps_dict['pip3'])
+    subprocess.run(['pip3', 'install', *deps_dict['pip3']])
+    print()
+
+    print_subsection(highlight('Installing with apt:'), *deps_dict['apt'])
+    subprocess.run(['sudo', 'apt', 'install', '-y',  *deps_dict['apt']])
+    print()
 
 def main():
     # Assert execution from 'dotfiles'-directory.
-    this_d  = os.path.dirname(os.path.abspath(__file__))
-    cwd     = os.getcwd();
+    this_d  = Path(__file__).parent.absolute()
+    cwd     = Path.cwd().absolute()
     if (this_d != cwd):
         print(f'You must execute this script from "{this_d}".')
         exit(1)
 
-    # Create symlinks
     LINKS = {
         #relative target        linkname
          './vimrc/my_vimrc':    '~/.vimrc',
@@ -122,35 +152,26 @@ def main():
          './nvim/coc-settings.json':            '~/.config/nvim/coc-settings.json',
          './nvim/coc_example_vim_cfg.vim':      '~/.config/nvim/coc_example_vim_cfg.vim',
     }
-    for t, ln in LINKS.items():
-        create_symlinks(t, ln)
+    create_symlinks(LINKS)
+
+    GITHUB_INSTALL_PATH = Path('~/repos').expanduser()
+    DEPS = {
+        'github' : {
+            'neovim' : {
+                'github_url' : 'https://github.com/neovim/neovim.git',
+                'clone_path' : GITHUB_INSTALL_PATH / 'neovim',
+                'apt_prereqs' : 'ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip',
+                'install_cmds' : ['make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install'],
+            }
+        },
+        'apt' : ['curl', 'tmux', 'ranger'],
+        'pip3' : ['jedi-language-server'],
+    }
+    install_deps(DEPS)
 
     # fix DOTFILES_HOME
     update_dotfiles_home_env(this_d)
 
-    # install latest NeoVim
-    if input(f'Do you want to install and build NeoVim?').lower().startswith('y'):
-        NVIM_GITHUB = 'https://github.com/neovim/neovim.git'
-        path_raw = input('Specify the folder to clone to (e.g.: ~/repos):') or '~/repos'
-        path = os.path.expanduser(path_raw)
-
-        clone_install_github(
-            gh_url=NVIM_GITHUB,
-            folder_name='neovim',
-            parent_folder_path=path,
-            prereqs='ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip',
-            install_cmds=['make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install'],
-        )
-
-    # Install packages using pip3
-    pip_packages = ['jedi-language-server']
-    if input(f'Do you want to install {pip_packages} with pip (y/n)?').lower().startswith('y'):
-        subprocess.run(['pip3', 'install', '-U', *pip_packages])
-
-    # Install packages using apt
-    apt_packages = ['curl', 'tmux']
-    if input(f'Do you want to install {apt_packages} with apt (y/n)?').lower().startswith('y'):
-        subprocess.run(['sudo', 'apt', 'install', *apt_packages])
 
 if __name__ == '__main__':
     main()

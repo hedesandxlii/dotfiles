@@ -27,7 +27,6 @@ Plug 'voldikss/vim-floaterm'
 Plug 'gruvbox-community/gruvbox'
 
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-"Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build' }
 call plug#end()
 
 colorscheme gruvbox
@@ -51,6 +50,6 @@ nmap <C-t> :FloatermNew ranger<CR>
 
 " Get coc keybinds and other stuff...
 source $HOME/.config/nvim/coc_example_vim_cfg.vim
-let g:coc_global_extensions = ['coc-jedi']
+let g:coc_global_extensions = ['coc-jedi', 'coc-json']
 
 let g:airline#extensions#tabline#enabled = 1

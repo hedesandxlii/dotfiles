@@ -1,4 +1,5 @@
 {
+    /* Jedi config */
     "jedi.enable": true,
     "jedi.startupMessage": false,
     "jedi.markupKindPreferred": "plaintext",
@@ -12,5 +13,18 @@
     "jedi.diagnostics.didOpen": true,
     "jedi.diagnostics.didChange": true,
     "jedi.diagnostics.didSave": true,
-    "jedi.workspace.extraPaths": []
+    "jedi.workspace.extraPaths": [],
+    /* ccls (cpp) config */
+    "languageserver": {
+        "ccls": {
+            "command": "ccls",
+            "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"],
+            "rootPatterns": [".ccls", "compile_commands.json", ".git/", ".hg/"],
+            "initializationOptions": {
+                "cache": {
+                    "directory": "/tmp/ccls"
+                }
+            }
+        }
+    }
 }
