@@ -16,6 +16,7 @@ set -o vi
 export BROWSER='chromium'
 export EDITOR='nvim'
 alias vim='nvim'
+alias tmux='tmux -2 -f ~/.tmux/tmux.conf'
 
 RESET="\e[0m"
 GREEN="\e[32m"
@@ -112,3 +113,5 @@ if [ -n "$git_st" ] || [ -n "$git_ahead_behind" ]; then
     cd - &> /dev/null
 fi
 
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
