@@ -69,7 +69,7 @@ def create_symlink(path_target, path_linkname):
 def create_symlinks(symlink_dict):
     for t, ln in symlink_dict.items():
         create_symlink(t, ln)
-    
+
 
 @section_print(title='Updating ' + highlight('bash_hostspecific'))
 def update_dotfiles_home_env(this_d):
@@ -135,6 +135,12 @@ def install_deps(deps_dict):
     subprocess.run(['sudo', 'apt', 'install', '-y',  *deps_dict['apt']])
     print()
 
+    print_subsection(highlight('Installing vim-plugged'))
+    subprocess.run(("sh -c 'curl -fLo \"${XDG_DATA_HOME:-$HOME/.local/share}\"/nvim/site/autoload/plug.vim"
+                   " --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'").split(' '))
+    print()
+
+
 def main():
     # Assert execution from 'dotfiles'-directory.
     this_d  = Path(__file__).parent.absolute()
@@ -164,7 +170,7 @@ def main():
                 'install_cmds' : ['make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install'],
             }
         },
-        'apt' : ['curl', 'tmux', 'ranger'],
+        'apt' : ['curl', 'tmux', 'ranger', 'ripgrep'],
         'pip3' : ['jedi-language-server'],
     }
     install_deps(DEPS)
