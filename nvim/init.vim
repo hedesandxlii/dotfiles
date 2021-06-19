@@ -59,6 +59,7 @@ nnoremap <C-t> :FloatermNew ranger<CR>
 nnoremap <leader>ev :e ~/.config/nvim/init.vim<CR>
 nnoremap <leader>f :Files<CR>
 nnoremap <leader>g :Rg<CR>
+nnoremap <F1> :set list! number! relativenumber!<CR> :call ToggleSignColumn()<CR>
 
 augroup PythonStuff
     autocmd Filetype python nnoremap <leader>; :! python3 "%"<CR>
@@ -88,3 +89,16 @@ let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:flake8_show_in_gutter=1
 let g:flake8_show_in_file=1
+
+""""" cred to cherrot@StackOverflow [https://stackoverflow.com/a/53930943]
+
+" Toggle signcolumn. Works on vim>=8.1 or NeoVim
+function! ToggleSignColumn()
+    if !exists("b:signcolumn_on") || b:signcolumn_on
+        set signcolumn=no
+        let b:signcolumn_on=0
+    else
+        set signcolumn=number
+        let b:signcolumn_on=1
+    endif
+endfunction
