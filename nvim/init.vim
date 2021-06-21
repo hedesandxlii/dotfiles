@@ -35,6 +35,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 Plug 'nvie/vim-flake8', { 'for': 'python' }
+Plug 'skywind3000/asyncrun.vim'
 
 call plug#end()
 
@@ -62,7 +63,8 @@ nnoremap <leader>g :Rg<CR>
 nnoremap <F1> :set list! number! relativenumber!<CR> :call ToggleSignColumn()<CR>
 
 augroup PythonStuff
-    autocmd Filetype python nnoremap <leader>; :! python3 "%"<CR>
+    autocmd Filetype python nnoremap <leader>; :AsyncRun -raw python3 "%"<CR> :copen<CR>
+    autocmd Filetype python nnoremap <buffer> <F8> :call flake8#Flake8()<CR>
 augroup END
 
 augroup CppStuff
@@ -81,7 +83,11 @@ augroup JavaStuff
 augroup END
 
 augroup MarkdownStuff
-    autocmd Filetype markdown nnoremap <leader>; :! chrome "%"
+    autocmd Filetype markdown nnoremap <leader>; :! google-chrome "%"<CR>
+augroup END
+
+augroup MiscStuff
+    autocmd Filetype netrw setl bufhidden=wipe
 augroup END
 
 let g:coc_global_extensions = ['coc-jedi']
@@ -90,8 +96,9 @@ let g:airline#extensions#tabline#enabled = 1
 let g:flake8_show_in_gutter=1
 let g:flake8_show_in_file=1
 
-""""" cred to cherrot@StackOverflow [https://stackoverflow.com/a/53930943]
+let $PYTHONUNBUFFERED=1
 
+""""" cred to cherrot@StackOverflow [https://stackoverflow.com/a/53930943]
 " Toggle signcolumn. Works on vim>=8.1 or NeoVim
 function! ToggleSignColumn()
     if !exists("b:signcolumn_on") || b:signcolumn_on
@@ -102,3 +109,4 @@ function! ToggleSignColumn()
         let b:signcolumn_on=1
     endif
 endfunction
+

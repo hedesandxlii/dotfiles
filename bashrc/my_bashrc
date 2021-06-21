@@ -96,10 +96,14 @@ git config --global alias.st 'status -s'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
-git config --global alias.magic 'push origin HEAD:refs/for/master'
+git config --global alias.magic 'push origin HEAD:refs/for/topic/change_detection_msc%wip'
+git config --global alias.mastermagic 'push origin HEAD:refs/for/master'
+git config --global alias.mastermagicwip 'push origin HEAD:refs/for/master%wip'
+git config --global alias.mastermagicready 'push origin HEAD:refs/for/master%ready'
 
 # 'dotfiles' status text
 cd $DOTFILES_HOME;
+git fetch -a &> /dev/null  # fetch remote changes
 git_st=$(git st)
 git_ahead_behind=$(git rev-list --left-right --count origin/master...master \
     | awk '{ if ($1 > 0) print "ahead " $1; if ($2 > 0) print " behind " $2; }')
@@ -108,8 +112,8 @@ cd - &> /dev/null
 if [ -n "$git_st" ] || [ -n "$git_ahead_behind" ]; then
     echo -e "${GREEN}==${RESET} Status of dotfiles ${GREEN}==${RESET}"
     cd $DOTFILES_HOME
+    echo "remote is $git_ahead_behind"
     git st  # Re-invoke to keep coloring
-    echo $git_ahead_behind
     cd - &> /dev/null
 fi
 

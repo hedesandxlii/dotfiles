@@ -111,7 +111,7 @@ def clone_install_github(github_url, clone_path, apt_prereqs, install_cmds):
     subprocess.run((f'git clone {github_url} {clone_path}').split(' '))
 
     print('Installing prerequisites with apt')
-    subprocess.run((f'sudo apt install {prereqs}').split(' '))
+    subprocess.run((f'sudo apt install {apt_prereqs}').split(' '))
 
     # run install commands
     print('Running install commands:')
@@ -185,7 +185,7 @@ def main():
         'pip3' : ['jedi-language-server'],
         'misc' : {
             'vim-plugged': [
-                'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+                "curl -fLo \"${XDG_DATA_HOME:-$HOME/.local/share}\"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
             ],
             'nodejs': [
                 'curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -',
