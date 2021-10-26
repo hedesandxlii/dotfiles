@@ -1,50 +1,56 @@
 filetype plugin indent on
 
-" visuals
-set nowrap
 set noerrorbells
-set number relativenumber
+set nowrap
 set nohlsearch
 set incsearch
-set scrolloff=8
-set completeopt=menuone,noinsert,noselect
-set colorcolumn=100
+
+set scrolloff=10
+set number relativenumber
+set completeopt=menu,menuone,preview,noinsert,noselect
+set colorcolumn=80
 set listchars=tab:»\ ,extends:›,precedes:‹,nbsp:·,trail:·
 set list
-set lazyredraw
 
-" files
+set expandtab             | " replace tabs with spaces
+set autoindent            | " copies indent on new line
+set tabstop=4             | " \
+set shiftwidth=4          | "  )- These 3 makes <Tab> = 4.
+set softtabstop=4         | " /
+
+set hidden
 set noswapfile nobackup nowritebackup
 set undodir=~/.vim/undodir
 set undofile
-set wildignore=.git,*.o,*.class
-set suffixes+=.old
 
-" misc
+set wildignore=.git,*.o,*.class,**/__pycache__
 set mouse=a
-set hidden
-
-" tabs & whitespace
-set autoindent   " start new line on same indentation level
-set shiftwidth=4 " #spaces per autoindent
-set expandtab    " use spaces instead of tab ("\t")
-set tabstop=4    " <Tab> == 4 spaces
-set smarttab
 
 """ Plugins "
 call plug#begin('~/.vim/plugged')
-Plug 'vim-airline/vim-airline' 
-Plug 'mhinz/vim-startify'
+
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
-Plug 'gruvbox-community/gruvbox'
+" Nice-to-have
+Plug 'tpope/vim-commentary'
+
+" Linting & Formatting
+" Run `:ALEInfo` to see available/enabled linters
+Plug 'dense-analysis/ale'
+Plug 'tell-k/vim-autopep8'
+
+" Colorschemes & visuals
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'NLKNguyen/papercolor-theme'
+
 call plug#end()
 
-colorscheme gruvbox
-highlight Normal guibg=none
-highlight Comment cterm=italic
+set background=dark
+colorscheme PaperColor
+let g:airline_theme='papercolor'
 
 """     Remaps! "
 
@@ -52,47 +58,45 @@ let mapleader = ","
 " Get coc keybinds and other stuff...
 source $HOME/.config/nvim/coc_example_vim_cfg.vim
 
-" Vim-like movement between panes "
-" nnoremap <C-j> <C-w>j
-" nnoremap <C-h> <C-w>h
-" nnoremap <C-k> <C-w>k
-" nnoremap <C-l> <C-w>l
-nnoremap <C-j> :cn<CR>
-nnoremap <C-k> :cp<CR>
+" Vim-like movement between `:make` errors "
+nnoremap <C-n> :cn<CR>
+nnoremap <C-p> :cp<CR>
 
 " Vim-like movement between buffers "
 nnoremap <S-h> :bp<CR>
 nnoremap <S-l> :bn<CR>
 
-" Vim-like move of current line "
-nnoremap J :call MoveLine("down")<CR>
-nnoremap K :call MoveLine("up")<CR>
-" Join -> Merge
-nnoremap M J
+nnoremap <C-j> :call MoveLine("down")<CR>
+nnoremap <C-k> :call MoveLine("up")<CR>
 
 " Hotkeys "
-nnoremap <C-t> :FloatermNew ranger<CR>
 nnoremap <leader>ev :e ~/.config/nvim/init.vim<CR>
-nnoremap <leader>f :Files<CR>
+nnoremap <expr> <leader>f DirPresent(".git") ? ':GFiles<CR>' : ':Files<CR>'
 nnoremap <leader>g :Rg<CR>
 nnoremap <F1> :set list! number! relativenumber!<CR> :call ToggleSignColumn()<CR>
+nnoremap Y y$ | " reasonable yanking
+vnoremap <C-c> "*y
 
 nnoremap <silent> <leader>; :make<CR>
 
-autocmd Filetype python compiler python  " ~/.config/nvim/compiler/python.vim
-
+autocmd Filetype python compiler python | " ~/.config/nvim/compiler/python.vim
+autocmd Filetype python set foldmethod=indent
+autocmd Filetype python set equalprg=autopep8\ - | " proper formatting
 autocmd Filetype cpp set noet
 autocmd Filetype c set noet
-autocmd Filetype java inoremap sout System.out.println();<Esc>hi
 
 """ Config "
 let g:coc_global_extensions = ['coc-jedi']
 let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:flake8_show_in_gutter=1
-let g:flake8_show_in_file=1
+
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+        \ 'python': ['flake8', 'mypy'],
+        \ }
 
 let $PYTHONUNBUFFERED=1
+
 
 """ Functions "
 
@@ -120,4 +124,11 @@ function! MoveLine(up_or_down)
     else
         echom "Invalid argument to MoveLine(): '" . a:up_or_down . "'"
     endif
+endfunction
+
+function! DirPresent(path)
+    if finddir(a:path, ".") == a:path
+        return 1
+    endif
+    return 0
 endfunction

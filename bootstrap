@@ -8,18 +8,24 @@ from termcolor import colored
 
 
 def print_help_and_exit():
-    print('This is an interactive bootstrapping script that symlinks to some config files.')
+    print('This is an interactive bootstrapping script'
+          'that symlinks to some config files.')
     exit(0)
 
 # pretty colors :)
-def highlight(string):  return colored(string, attrs=['bold', 'underline'])
-def warning(string):    return colored(string, 'yellow', attrs=['bold'])
-def good(string):       return colored(string, 'green', attrs=['bold'])
-def note():             return colored('Note:', 'cyan', attrs=['bold'])
+
+
+def highlight(string): return colored(string, attrs=['bold', 'underline'])
+def warning(string): return colored(string, 'yellow', attrs=['bold'])
+def good(string): return colored(string, 'green', attrs=['bold'])
+def note(): return colored('Note:', 'cyan', attrs=['bold'])
+
+
 def print_subsection(*args):
     string = ' '.join(args)
     string = ' ' + string + ' '
     print(('-'*10) + (string.ljust(70, '-')))
+
 
 def section_print(title):
     def decorator(function):
@@ -40,19 +46,22 @@ def create_symlink(path_target, path_linkname):
     print('Processing', highlight(current_file), '...')
 
     if not os.path.exists(path_target):
-        print(' ', warning('Target for link does not exist:'), f'\n\t{path_target}')
+        print(' ', warning('Target for link does not exist:'),
+              f'\n\t{path_target}')
         return
 
     if os.path.exists(path_linkname):
         # check if target & linkname are already linked:
         if os.path.islink(path_linkname) and os.readlink(path_linkname) == path_target:
-            print(' ', highlight(current_file), good('is already completely linked'))
+            print(' ', highlight(current_file),
+                  good('is already completely linked'))
             return
 
         # if the files are equal, it should be safe to overwrite path_linkname
         # by linking.
         if (filecmp.cmp(path_target, path_linkname, shallow=False)):
-            print(' ', warning('Overwriting'), current_file, 'as contents where exactly the same.')
+            print(' ', warning('Overwriting'), current_file,
+                  'as contents where exactly the same.')
             os.remove(path_linkname)
             os.symlink(path_target, path_linkname)
             return
@@ -96,10 +105,12 @@ def update_dotfiles_home_env(this_d):
         with open(bash_hs, 'a+') as file_obj:
             file_obj.write(f'export DOTFILES_HOME={this_d}\n')
 
+
 def clone_install_github(github_url, clone_path, apt_prereqs, install_cmds):
     clone_path = Path(clone_path)
     if clone_path.exists():
-        print(highlight(clone_path), warning('already exists.'), 'Will not try to clone.')
+        print(highlight(clone_path), warning(
+            'already exists.'), 'Will not try to clone.')
         return
 
     if not clone_path.parent.exists():
@@ -120,6 +131,7 @@ def clone_install_github(github_url, clone_path, apt_prereqs, install_cmds):
     for cmd in install_cmds:
         subprocess.run(cmd.split(' '), cwd=clone_path)
 
+
 @section_print(title='Installing deps')
 def install_deps(deps_dict):
     for github_dep in deps_dict['github'].values():
@@ -139,13 +151,18 @@ def install_deps(deps_dict):
     for misc_dep, install_cmds in deps_dict['misc'].items():
         print_subsection('Installing', highlight(misc_dep))
         for install_cmd in install_cmds:
+            if '~' in install_cmd:
+                install_cmd = install_cmd.replace(
+                    '~',
+                    Path('~').expanduser().as_posix()
+                )
             if '|' in install_cmd:
                 # Run with pipe. only supports one pipe atm
                 assert install_cmd.count('|') == 1
                 parts = install_cmd.split('|')
                 parts = [part.strip().split(' ') for part in parts]
                 prg1 = subprocess.Popen(parts[0], stdout=subprocess.PIPE)
-                output = subprocess.check_output(parts[1], stdin=prg1.stdout)
+                _ = subprocess.check_output(parts[1], stdin=prg1.stdout)
                 prg1.wait()
             else:
                 subprocess.run(install_cmd.split(' '), check=True)
@@ -154,42 +171,53 @@ def install_deps(deps_dict):
 
 def main():
     # Assert execution from 'dotfiles'-directory.
-    this_d  = Path(__file__).parent.absolute()
-    cwd     = Path.cwd().absolute()
+    this_d = Path(__file__).parent.absolute()
+    cwd = Path.cwd().absolute()
     if (this_d != cwd):
         print(f'You must execute this script from "{this_d}".')
         exit(1)
 
     LINKS = {
-        #relative target        linkname
-         './vimrc/my_vimrc':    '~/.vimrc',
-         './bashrc/my_bashrc':  '~/.bashrc',
-         './tmux/tmux.conf':    '~/.tmux/tmux.conf',
-         './nvim/init.vim':     '~/.config/nvim/init.vim',
-         './nvim/coc-settings.json':            '~/.config/nvim/coc-settings.json',
-         './nvim/coc_example_vim_cfg.vim':      '~/.config/nvim/coc_example_vim_cfg.vim',
+        # relative target        linkname
+        './vimrc/my_vimrc':    '~/.vimrc',
+        './bashrc/my_bashrc':  '~/.bashrc',
+        './tmux/tmux.conf':    '~/.tmux/tmux.conf',
+        './nvim/init.vim':     '~/.config/nvim/init.vim',
+        './nvim/coc-settings.json':
+            '~/.config/nvim/coc-settings.json',
+        './nvim/coc_example_vim_cfg.vim':
+            '~/.config/nvim/coc_example_vim_cfg.vim',
+        './nvim/compiler/python.vim':
+            '~/.config/nvim/compiler/python.vim'
     }
     create_symlinks(LINKS)
 
     GITHUB_INSTALL_PATH = Path('~/repos').expanduser()
     DEPS = {
-        'github' : {
-            'neovim' : {
-                'github_url' : 'https://github.com/neovim/neovim.git',
-                'clone_path' : GITHUB_INSTALL_PATH / 'neovim',
-                'apt_prereqs' : 'ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip',
-                'install_cmds' : ['make CMAKE_BUILD_TYPE=RelWithDebInfo', 'sudo make install'],
+        'github': {
+            'neovim': {
+                'github_url': 'https://github.com/neovim/neovim.git',
+                'clone_path': GITHUB_INSTALL_PATH / 'neovim',
+                'apt_prereqs': 'ninja-build gettext libtool libtool-bin'
+                               'autoconf automake cmake g++ pkg-config unzip',
+                'install_cmds': [
+                    'make CMAKE_BUILD_TYPE=RelWithDebInfo',
+                    'sudo make install'
+                ],
             }
         },
-        'apt' : ['curl', 'tmux', 'ranger', 'ripgrep'],
-        'pip3' : ['jedi-language-server'],
-        'misc' : {
+        'apt': ['curl', 'tmux', 'ranger', 'ripgrep'],
+        'pip3': ['jedi-language-server'],
+        'misc': {
             'vim-plugged': [
-                "curl -fLo \"${XDG_DATA_HOME:-$HOME/.local/share}\"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+                'curl -fLo '
+                '~/.local/share/nvim/site/autoload/plug.vim '
+                '--create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'  # noqa: E501
             ],
             'nodejs': [
-                'curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -',
-                'sudo apt install nodejs'
+                'curl -sL '
+                r'https://deb.nodesource.com/setup_14.x | sudo -E bash - ',
+                r'sudo apt install nodejs'
             ],
         }
     }
