@@ -1,16 +1,11 @@
 # Dotfiles
 
-This is a collection of my dotfiles, mainly being for vim and bash.
+This is a collection of my dotfiles, mainly being for neovim and bash.
 
-## Getting vim 8.2
+# Quickstart
 
-On Ubuntu, you are able to add an unofficial apt ppa:
-
+```sh
+$ ./bootstrap --install
 ```
-sudo add-apt-repository ppa:jonathonf/vim
-sudo apt update
-sudo apt install vim
-
-
-vim --version
-```
+will install NeoVim and Doom-nvim. Currently only works with Python 3.10, which
+might've been an oversigt `¯\_(ツ)_/¯`.
