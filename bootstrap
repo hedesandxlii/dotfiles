@@ -3,12 +3,13 @@ import argparse
 import subprocess as sp
 from abc import abstractmethod
 from pathlib import Path
-from typing import Protocol
+from typing import List, Protocol, Union
 
 from termcolor import colored
 
 
 ReturnCode = int
+UnparsedCommand = Union[str, List[str]]
 
 def echo_command(command: str, prefix: str):
     print(f"{prefix} {colored(command, 'cyan')}")
@@ -19,7 +20,7 @@ def echo_return_code(return_code: ReturnCode):
     print(f"Return code: {colored(str(return_code), color)}")
 
 class ShellCommand:
-    def __init__(self, command: str | list[str]):
+    def __init__(self, command: UnparsedCommand):
         if isinstance(command, list):
             self.command_vector = command
         elif isinstance(command, str):
@@ -36,7 +37,7 @@ class ShellCommand:
             return line[:trunc_width] + trunc_suffix
         else:
             return line
-            
+
     def _scroll_output(self, stream, width: int = 80):
         for line in stream:
             clean_line = self.truncate(line, width).strip().ljust(width)
@@ -48,6 +49,7 @@ class ShellCommand:
     def run_output_scroll(self, **popen_kwargs) -> ReturnCode:
         proc = sp.Popen(self.command_vector,
                         encoding="utf-8", stdout=sp.PIPE, **popen_kwargs)
+        assert proc.stdout is not None
         self._scroll_output(proc.stdout)
         return proc.wait()
 
@@ -142,7 +144,7 @@ class DoomNVIM(AbsDependency):
     def __init__(self):
         super().__init__(name="doom-nvim")
         self.nvim_config_dir = Path.home() / ".config" / "nvim"
-    
+
     def get_fancy_name(self):
         return colored("", "red") + " nvim (doom-nvim)"
 
