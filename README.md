@@ -28,3 +28,4 @@ isolates the dependencies to `./.deps` (which can later be removed).
 * Automatic install of NeoVim [build prerequisites](https://github.com/neovim/neovim/wiki/Building-Neovim#build-prerequisites).
 * Set-up Doom-nvim to my specs :) (config, `pynvim`, ...)
 * Fix symlink issue where relative paths turn into broken links.
+* Automagically install `node/npm`. Used for lsps in nvim (See [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04))
