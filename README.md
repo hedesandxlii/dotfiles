@@ -24,6 +24,6 @@ isolates the dependencies to `./.deps` (which can later be removed).
 
 # TODO
 
-* Automatic install of FiraCode font ([Ad Hoc curl install](https://github.com/ryanoasis/nerd-fonts#option-6-ad-hoc-curl-download))
+* Automatic install of FiraCode font ([Ad Hoc curl install](https://github.com/ryanoasis/nerd-fonts#option-6-ad-hoc-curl-download) or apt package `fonts-firacode`)
 * Automatic install of NeoVim [build prerequisites](https://github.com/neovim/neovim/wiki/Building-Neovim#build-prerequisites).
 * Set-up Doom-nvim to my specs :) (config, `pynvim`, ...)
