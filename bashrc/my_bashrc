@@ -13,61 +13,32 @@ fi
 # Vim-mode for bash
 set -o vi
 
-export BROWSER='chromium'
 export EDITOR='nvim'
 alias vim='nvim'
+alias pip3='echo "using alias pip3=python3 -m pip"; python3 -m pip'
 alias tmux='tmux -2 -f ~/.tmux/tmux.conf'
+alias open='xdg-open'
 
 RESET="\e[0m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
-CYAN="\e[36m"
-RED="\e[31m"
+BRIGHT_BLACK="\e[30;1m"
+BRIGHT_WHITE="\e[37;1m"
+DIM_GREEN="\e[32;2m"
 
-RESET_NOLEN="\[${RESET}\]"
-GREEN_NOLEN="\[${GREEN}\]"
-YELLOW_NOLEN="\[${YELLOW}\]"
-BLUE_NOLEN="\[${BLUE}\]"
-CYAN_NOLEN="\[${CYAN}\]"
-RED_NOLEN="\[${RED}\]"
+RESET="\[${RESET}\]"
+BRIGHT_BLACK="\[${BRIGHT_BLACK}\]"
+BRIGHT_WHITE="\[${BRIGHT_WHITE}\]"
+DIM_GREEN="\[${DIM_GREEN}\]"
 
-# Used to wrap text in color using escape codes and then adding that to PS1
-# $1 text to be wrapped
-# $2 color, string.
-add_to_PS1() {
-    case $2 in
-        green)
-            PS1+="${GREEN_NOLEN}$1${RESET_NOLEN}"
-            ;;
-        yellow)
-            PS1+="${YELLOW_NOLEN}$1${RESET_NOLEN}"
-            ;;
-        blue)
-            PS1+="${BLUE_NOLEN}$1${RESET_NOLEN}"
-            ;;
-        cyan)
-            PS1+="${CYAN_NOLEN}$1${RESET_NOLEN}"
-            ;;
-        red)
-            PS1+="${RED_NOLEN}$1${RESET_NOLEN}"
-            ;;
-        *)
-            PS1+=$1
-            ;;
-    esac
-}
+GIT_BOX='$(git branch 2>/dev/null | grep "^*" | colrm 1 2 | sed "s/\(.*\)/[\1] /")'
 
 set_my_PS1() {
     unset PS1
-    add_to_PS1 "[ " yellow
-    add_to_PS1 "\u" green
-    add_to_PS1 " : "
-    add_to_PS1 "\w" blue
-    add_to_PS1 " ] " yellow
-    add_to_PS1 '[$(git branch 2>/dev/null | grep "^*" | colrm 1 2)]' green
-    [ $VIM ] && add_to_PS1 "[VIM :sh]" yellow
-    add_to_PS1 "\n\$ "
+    PS1="${BRIGHT_BLACK}\w${RESET}"
+    PS1+=" "
+    PS1+="${DIM_GREEN}"
+    PS1+=$GIT_BOX
+    PS1+="${RESET}"
+    PS1+="${BRIGHT_WHITE}\$${RESET} "
 }
 set_my_PS1
 
@@ -86,7 +57,6 @@ PROMPT_COMMAND=lastcmd
 alias naut='nautilus . > /dev/null &'
 alias :q='exit'
 alias chrome="chromium-browser"
-alias py="python3"
 
 # git aliases
 git config --global alias.co checkout
@@ -96,26 +66,10 @@ git config --global alias.st 'status -s'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
-git config --global alias.magic 'push origin HEAD:refs/for/topic/change_detection_msc%wip'
-git config --global alias.mastermagic 'push origin HEAD:refs/for/master'
-git config --global alias.mastermagicwip 'push origin HEAD:refs/for/master%wip'
-git config --global alias.mastermagicready 'push origin HEAD:refs/for/master%ready'
-
-# 'dotfiles' status text
-cd $DOTFILES_HOME;
-git fetch -a &> /dev/null  # fetch remote changes
-git_st=$(git st)
-git_ahead_behind=$(git rev-list --left-right --count origin/master...master \
-    | awk '{ if ($1 > 0) print "ahead " $1; if ($2 > 0) print " behind " $2; }')
-cd - &> /dev/null
-
-if [ -n "$git_st" ] || [ -n "$git_ahead_behind" ]; then
-    echo -e "${GREEN}==${RESET} Status of dotfiles ${GREEN}==${RESET}"
-    cd $DOTFILES_HOME
-    echo "remote is $git_ahead_behind"
-    git st  # Re-invoke to keep coloring
-    cd - &> /dev/null
-fi
-
+git config --global alias.magic 'push origin HEAD:refs/for/master'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
