@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+export SHELL=zsh
+export EDITOR='emacsclient -a emacs'
+export VIISUAL=$EDITOR
+export BROWSER=firefox
+
+xrdb -merge ~/.Xresources &
+setxkbmap -option caps:esc us &
+picom -b &
+
+status_bar &
+setup_xinput &
+setup_systray &
+
+emacs --daemon &
+
+exec dwm

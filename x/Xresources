@@ -1,0 +1,27 @@
+! dracula color scheme https://draculatheme.com/contribute
+#define dark_gray   #282a36
+#define gray        #44475a
+#define light_gray  #6272a4
+#define off_white   #f8f8f2
+#define cyan        #8be9fd
+#define green       #50fa7b
+#define orange      #ffb86c
+#define pink        #ff79c6
+#define purple      #bd93f9
+#define red         #ff5555
+#define yellow      #f1fa8c
+
+dwm.normbgcolor: light_gray
+dwm.normfgcolor: dark_gray
+dwm.selbgcolor: dark_gray
+dwm.selfgcolor: off_white
+
+dwm.gappx: 40
+dwm.borderpx: 0
+dwm.normbordercolor: dark_gray
+dwm.selbordercolor: purple
+
+dmenu.normbgcolor: off_white
+dmenu.normfgcolor: dark_gray
+dmenu.selbgcolor: purple
+dmenu.selfgcolor: off_white
