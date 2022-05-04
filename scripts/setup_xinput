@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# $1 is the xinput device number
+apply_xinput_settings() {
+    xinput --set-prop $1 "libinput Natural Scrolling Enabled" 1
+    xinput --set-prop $1 "libinput Tapping Enabled" 1
+}
+
+if [ $# -eq 1 ]; then
+    apply_xinput_settings $1
+else
+    echo "Trying to autodetect touchpad device id..."
+    device_id=$(xinput | grep Touchpad | sed 's/.*id=\([0-9]\+\).*/\1/')
+    echo "Found \"Touchpad\" with id = $device_id"
+    read -p "Apply settings to $device_id? [Y/n] " yn
+
+    case $yn in
+        [Nn])
+            echo "Aborted"
+            ;;
+        *)
+            apply_xinput_settings $device_id
+            ;;
+    esac
+    
+fi

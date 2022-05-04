@@ -1,0 +1,4 @@
+#!/bin/sh
+[ -z $(pgrep nm-applet) ] && nm-applet &
+[ -z $(pgrep blueman-applet) ] && blueman-applet &
+[ -z $(pgrep pasystray) ] && pasystray &

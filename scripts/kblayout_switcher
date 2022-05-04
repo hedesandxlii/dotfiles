@@ -1,0 +1,16 @@
+#!/bin/sh
+
+SETXKBMAP_OPTIONS="-option caps:escape"
+
+current="$(setxkbmap -query | grep layout | awk '{print $2}')"
+case $current in
+    us)
+        setxkbmap $SETXKBMAP_OPTIONS se
+        ;;
+    *)
+        setxkbmap $SETXKBMAP_OPTIONS us
+        ;;
+esac
+
+# Disable caps lock if it is enabled.
+[ "$(xset q | grep -i caps | cut -c 22-23)" = "on" ] && xdotool key Caps_Lock
