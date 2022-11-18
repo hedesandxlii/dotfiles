@@ -1,75 +1,72 @@
-# Source standard .bashrc
-if [ -f /etc/skel/.bashrc ]; then
-    . /etc/skel/.bashrc
-else
-    echo Could not find /etc/skel/.bashrc, no defaults set.
-fi
+extend_path ()     { export PATH="$1:$PATH"; }  # extend PATH with $1
+mby_extend_path () { [ -d $1 ] && extend_path $1; }
+mby_source_file () { [ -f $1 ] && source $1; }  # source $1 if it's a file
+mby_run_file ()    { [ -f $1 ] && $1 || echo "$1 does not exist"; } 
+silent ()          { $1 &> /dev/null; return $?; } # run commands silently
 
-# Source any host specific configs.
-if [ -f ~/.bash_hostspecific ]; then
-    . ~/.bash_hostspecific
-fi
 
-# Vim-mode for bash
-set -o vi
+mby_source_file "/etc/skel/.bashrc"         # ubuntu bash defaults
+mby_source_file "$HOME/.bash_hostspecific"  # hostspecific aliases and env.vars
+mby_source_file "$HOME/.fzf.bash"           # fzf bash integration
 
-export EDITOR='nvim'
-alias vim='nvim'
-alias pip3='echo "using alias pip3=python3 -m pip"; python3 -m pip'
-alias tmux='tmux -2 -f ~/.tmux/tmux.conf'
-alias open='xdg-open'
+mby_extend_path "$HOME/.local/share/pycharm-community-2022.2.2/bin" # pycharm
+mby_extend_path "$HOME/.config/emacs/bin"                           # doom
+mby_extend_path "$HOME/.roswell/bin"                                # roswell installs
+mby_extend_path "$HOME/.cargo/bin"                                  # cargo (rust)
 
-RESET="\e[0m"
-BRIGHT_BLACK="\e[30;1m"
-BRIGHT_WHITE="\e[37;1m"
-DIM_GREEN="\e[32;2m"
-
-RESET="\[${RESET}\]"
-BRIGHT_BLACK="\[${BRIGHT_BLACK}\]"
-BRIGHT_WHITE="\[${BRIGHT_WHITE}\]"
-DIM_GREEN="\[${DIM_GREEN}\]"
-
-GIT_BOX='$(git branch 2>/dev/null | grep "^*" | colrm 1 2 | sed "s/\(.*\)/[\1] /")'
-
-set_my_PS1() {
-    unset PS1
-    PS1="${BRIGHT_BLACK}\w${RESET}"
-    PS1+=" "
-    PS1+="${DIM_GREEN}"
-    PS1+=$GIT_BOX
-    PS1+="${RESET}"
-    PS1+="${BRIGHT_WHITE}\$${RESET} "
-}
-set_my_PS1
-
-# Trim lenght of prompt.
-export PROMPT_DIRTRIM=4
-
-# Change title of window to current directory
-PROMPT_COMMAND_BASE="\033]0;$(whoami)@$(hostname) | $(dirs)"
-lastcmd() {
-    LASTCMD=$(history 1 | cut -c8-)
-    echo -ne "$PROMPT_COMMAND_BASE | $LASTCMD \a"
-}
-PROMPT_COMMAND=lastcmd
+# Environment variables
+export EDITOR=hx
+export PROMPT_DIRTRIM=4  # Trim lenght of prompt.
 
 # Handy aliases
 alias naut='nautilus . > /dev/null &'
-alias :q='exit'
-alias chrome="chromium-browser"
+alias rm='rm --interactive=once --verbose'
+alias p="python3"
+alias pm="python3 -m"
+alias pip3='echo "using alias pip3=python3 -m pip"; python3 -m pip'
 
 # git aliases
 git config --global alias.co checkout
-git config --global alias.br branch
 git config --global alias.ci commit
+git config --global alias.br branch
+git config --global alias.cp 'cherry-pick'
+git config --global alias.rb 'rebase'
+git config --global alias.d diff
+git config --global alias.ds 'diff --staged'
 git config --global alias.st 'status -s'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
-git config --global alias.magic 'push origin HEAD:refs/for/master'
+git config --global alias.lgg 'log --graph --oneline --branches -n 20 HEAD'
+git config --global alias.detach 'checkout --detach'
+git config --global alias.cleen 'clean -xdf -e venv*/'
+git config --global alias.ups 'commit -a --amend --no-edit'
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+## Utility functions
+
+# Returns the unmerged file names
+conflicts () {
+  git diff --name-only --diff-filter=U
+}
+
+# Returns & prints error if any command in $@ does not exists
+require () {
+  for cmd in $@; do
+    if ! silent "command -v $cmd"; then
+	    echo "$cmd does not exist"
+	    return 1
+  	fi
+  done
+}
+
+# handy clipboard. Example:
+#    cat my_file.txt | ahclip
+ahclip () {
+	require "xclip" || return 1
+
+	pipe_input=$(cat -)
+	echo $pipe_input | xclip -selection clipboard
+	echo -e "$(echo $pipe_input | wc -l) line(s) was copied to clipboard"
+}
+
