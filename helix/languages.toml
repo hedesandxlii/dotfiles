@@ -1,0 +1,24 @@
+[language-server.ruff-lsp]
+command = "ruff-lsp"
+
+[language-server.pylsp]
+command = "pylsp"
+args = ["--log-file", "/home/andre/.cache/helix/pylsp.log"]
+
+[language-server.pylsp.config.pylsp.plugins]
+flake8 = {enabled = false}
+autopep8 = {enabled = false}
+mccabe = {enabled = false}
+pycodestyle = {enabled = false}
+pyflakes = {enabled = false}
+pylint = {enabled = false}
+yapf = {enabled = false}
+
+[[language]]
+name = "python"
+file-types = ["py", "pyi"]
+roots = ["pyproject.toml", "setup.cfg", "setup.py"]
+formatter = { command = "black", args = ["-", "-q"] }
+auto-format = false
+language-servers = [ { name = "pylsp"}, {name = "ruff-lsp" } ]
+
