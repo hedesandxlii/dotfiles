@@ -4,19 +4,19 @@ mby_source_file () { [ -f $1 ] && source $1; }  # source $1 if it's a file
 mby_run_file ()    { [ -f $1 ] && $1 || echo "$1 does not exist"; } 
 silent ()          { $1 &> /dev/null; return $?; } # run commands silently
 
-
 mby_source_file "/etc/skel/.bashrc"         # ubuntu bash defaults
 mby_source_file "$HOME/.bash_hostspecific"  # hostspecific aliases and env.vars
 mby_source_file "$HOME/.fzf.bash"           # fzf bash integration
 
-mby_extend_path "$HOME/.local/share/pycharm-community-2022.2.2/bin" # pycharm
-mby_extend_path "$HOME/.config/emacs/bin"                           # doom
-mby_extend_path "$HOME/.roswell/bin"                                # roswell installs
-mby_extend_path "$HOME/.cargo/bin"                                  # cargo (rust)
+mby_extend_path "$HOME/.roswell/bin"      # roswell installs
+mby_extend_path "$HOME/.cargo/bin"        # cargo (rust)
+mby_extend_path "$HOME/.npm-global/bin"   # npm (node)
+mby_extend_path "$HOME/go/bin"            # go packages
 
 # Environment variables
 export EDITOR=hx
-export PROMPT_DIRTRIM=4  # Trim lenght of prompt.
+export BROWSER=chromium
+export XDG_CONFIG_HOME="$HOME/.config"
 
 # Handy aliases
 alias naut='nautilus . > /dev/null &'
@@ -28,12 +28,13 @@ alias pip3='echo "using alias pip3=python3 -m pip"; python3 -m pip'
 # git aliases
 git config --global alias.co checkout
 git config --global alias.ci commit
+git config --global alias.st 'status --short --branch'
 git config --global alias.br branch
-git config --global alias.cp 'cherry-pick'
-git config --global alias.rb 'rebase'
+git config --global alias.cp cherry-pick
+git config --global alias.rb rebase
+git config --global alias.rbc 'rebase --continue'
 git config --global alias.d diff
 git config --global alias.ds 'diff --staged'
-git config --global alias.st 'status -s'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
@@ -42,6 +43,67 @@ git config --global alias.detach 'checkout --detach'
 git config --global alias.cleen 'clean -xdf -e venv*/'
 git config --global alias.ups 'commit -a --amend --no-edit'
 
+# launch git-related apps
+git config --global alias.ui         '!gitui || echo "could not launch gitui :("'
+
+# gerrit pushing
+git config --global alias.magic '!git push origin HEAD:refs/for/master || (read -p "Try "main" branch instead of "master"? (Y/n)" yn && [ "$yn" != "n" ] && git push origin HEAD:refs/for/main)'
+git config --global alias.blackmagic 'push --no-verify origin HEAD:refs/for/master'
+
+# sets prompt (t.y.: https://stackoverflow.com/a/30963255)
+export GIT_PS1_SHOWCOLORHINTS=1
+export GIT_PS1_SHOWDIRTYSTATE=1
+set_prompt()
+{
+  local last_errcode=$?
+  local txtreset='$(tput sgr0)'
+  local txtbold='$(tput bold)'
+  local txtstandout='$(tput smso)'
+  local txtdim='$(tput dim)'
+  local txtuline_start='$(tput smul)'
+  local txtuline_end='$(tput rmul)'
+
+  local txtred='$(tput setaf 1)'
+  local txtgreen='$(tput setaf 2)'
+  local txtyellow='$(tput setaf 3)'
+  local txtblue='$(tput setaf 4)'
+  local txtpurple='$(tput setaf 5)'
+  local txtcyan='$(tput setaf 6)'
+
+  # unicode "✗"
+  local fancyx='\342\234\227'
+  # unicode "✓"
+  local checkmark='\342\234\223'
+
+  # "user@host : "
+  PS1="\[$txtreset\]\[$txtdim\]\u@\h :\[$txtreset\] "
+
+  # current path
+  PS1+="\[$txtpurple\]\w "
+
+  PS1+="\[$txtreset\]("
+
+  # a red "✗" or a green "✓" and the error number
+  [[ $last_errcode == 0 ]] && PS1+="\[$txtgreen\]$checkmark " || PS1+="\[$txtred\]$fancyx "
+
+  PS1+="\[$txtreset\]$last_errcode) "
+
+  # git branch
+  PS1+="\[$txtreset\]$(__git_ps1 '[ %s |')"
+
+  commit_title="$(git log -n1 --format='format:%s' 2>/dev/null)"
+  if [ -n "$commit_title" ]
+  then
+    PS1+=' \[$txtdim\]$(echo $commit_title | cut -c1-30)...\[$txtreset\] ]'
+  fi
+
+  # newline to get prompt on separate line
+  PS1+="\n"
+
+  # good old prompt, $ for user, # for root
+  PS1+="\\$ "
+}
+PROMPT_COMMAND='set_prompt'
 
 ## Utility functions
 
@@ -60,13 +122,39 @@ require () {
   done
 }
 
+
+# grep + sed based symbol renamer
+#
+# $1 is the old name
+# $2 is the new name
+# $3 is the working directory (or "." if ommited)
+rename-symbol () {
+  if [ $# -lt 2 ]; then
+    echo "not enough arguments"
+    return 1
+  fi
+
+  root=${3:-.}
+
+  grep -lr -1 $1 $root | xargs -i@ sed -i "s/$1/$2/g" @
+
+  echo "Changed all occurences under \"$root\" from"
+  echo "\"$1\""
+  echo "to"
+  echo "\"$2\""
+}
+
+
 # handy clipboard. Example:
 #    cat my_file.txt | ahclip
 ahclip () {
 	require "xclip" || return 1
 
-	pipe_input=$(cat -)
-	echo $pipe_input | xclip -selection clipboard
-	echo -e "$(echo $pipe_input | wc -l) line(s) was copied to clipboard"
+	cat - | xclip -selection clipboard
 }
 
+ahclipcmd () {
+  require "xclip" || return 1
+
+  history | cut -d' ' -f4- | tail -n2 | head -n1 | ahclip
+}
