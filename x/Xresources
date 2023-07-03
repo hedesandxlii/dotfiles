@@ -1,27 +1,62 @@
 ! dracula color scheme https://draculatheme.com/contribute
-#define dark_gray   #282a36
-#define gray        #44475a
-#define light_gray  #6272a4
-#define off_white   #f8f8f2
-#define cyan        #8be9fd
-#define green       #50fa7b
-#define orange      #ffb86c
-#define pink        #ff79c6
-#define purple      #bd93f9
-#define red         #ff5555
-#define yellow      #f1fa8c
+#define dracula_dark_gray  #282a36
+#define dracula_gray       #44475a
+#define dracula_light_gray #6272a4
+#define dracula_off_white  #f8f8f2
+#define dracula_cyan       #8be9fd
+#define dracula_green      #50fa7b
+#define dracula_orange     #ffb86c
+#define dracula_pink       #ff79c6
+#define dracula_purple     #bd93f9
+#define dracula_red        #ff5555
+#define dracula_yellow     #f1fa8c
 
-dwm.normbgcolor: light_gray
-dwm.normfgcolor: dark_gray
-dwm.selbgcolor: dark_gray
-dwm.selfgcolor: off_white
+! catppuccin latte color theme
+#define catppuccin_latte_rosewater #dc8a78
+#define catppuccin_latte_flamingo  #dd7878
+#define catppuccin_latte_pink      #ea76cb
+#define catppuccin_latte_mauve     #8839ef
+#define catppuccin_latte_red       #d20f39
+#define catppuccin_latte_maroon    #e64553
+#define catppuccin_latte_peach     #fe640b
+#define catppuccin_latte_yellow    #df8e1d
+#define catppuccin_latte_green     #40a02b
+#define catppuccin_latte_teal      #179299
+#define catppuccin_latte_sky       #04a5e5
+#define catppuccin_latte_sapphire  #209fb5
+#define catppuccin_latte_blue      #1e66f5
+#define catppuccin_latte_lavender  #7287fd
+#define catppuccin_latte_text      #4c4f69
+#define catppuccin_latte_subtext1  #5c5f77
+#define catppuccin_latte_subtext0  #6c6f85
+#define catppuccin_latte_overlay2  #7c7f93
+#define catppuccin_latte_overlay1  #8c8fa1
+#define catppuccin_latte_overlay0  #9ca0b0
+#define catppuccin_latte_surface2  #acb0be
+#define catppuccin_latte_surface1  #bcc0cc
+#define catppuccin_latte_surface0  #ccd0da
+#define catppuccin_latte_base      #eff1f5
+#define catppuccin_latte_mantle    #e6e9ef
+#define catppuccin_latte_crust     #dce0e8
 
-dwm.gappx: 40
-dwm.borderpx: 0
-dwm.normbordercolor: dark_gray
-dwm.selbordercolor: purple
+#define i3_focused_border   #4c7899
+#define i3_focused_backgr   #285577
+#define i3_focused_text     #ffffff
+#define i3_unfocused_border #333333
+#define i3_unfocused_backgr #222222
+#define i3_unfocused_text   #888888
 
-dmenu.normbgcolor: off_white
-dmenu.normfgcolor: dark_gray
-dmenu.selbgcolor: purple
-dmenu.selfgcolor: off_white
+dwm.normbgcolor: i3_unfocused_border
+dwm.normfgcolor: i3_unfocused_text
+dwm.selbgcolor: i3_focused_border
+dwm.selfgcolor: i3_focused_text
+
+dwm.gappx: 10
+dwm.borderpx: 5
+dwm.normbordercolor: i3_unfocused_border
+dwm.selbordercolor: i3_focused_border
+
+! dmenu.normbgcolor <=> dwm.normbgcolor
+! dmenu.normfgcolor <=> dwm.normfgcolor
+! dmenu.selbgcolor  <=> dwm.selbgcolor
+! dmenu.selfgcolor  <=> dwm.selfgcolor

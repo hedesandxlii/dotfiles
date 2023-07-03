@@ -1,18 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-export SHELL=zsh
-export EDITOR='emacsclient -a emacs'
-export VIISUAL=$EDITOR
-export BROWSER=firefox
+export PATH="$PATH:$HOME/.local/bin/"
 
+[ -f ~/.fehbg ] && ~/.fehbg &
 xrdb -merge ~/.Xresources &
 setxkbmap -option caps:esc us &
-picom -b &
 
 status_bar &
 setup_xinput &
 setup_systray &
 
-emacs --daemon &
-
-exec dwm
+exec dwm > ~/.local/share/dwm/dwm.log 2>&1
