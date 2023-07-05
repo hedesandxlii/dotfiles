@@ -4,19 +4,20 @@ mby_source_file () { [ -f $1 ] && source $1; }  # source $1 if it's a file
 mby_run_file ()    { [ -f $1 ] && $1 || echo "$1 does not exist"; } 
 silent ()          { $1 &> /dev/null; return $?; } # run commands silently
 
-mby_source_file "/etc/skel/.bashrc"         # ubuntu bash defaults
-mby_source_file "$HOME/.bash_hostspecific"  # hostspecific aliases and env.vars
-mby_source_file "$HOME/.fzf.bash"           # fzf bash integration
+mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
+mby_source_file "/usr/share/git/git-prompt.sh"  # git PS1
+mby_source_file "$HOME/.bash_hostspecific"      # hostspecific aliases and env.vars
+mby_source_file "$HOME/.fzf.bash"               # fzf bash integration
 
-mby_extend_path "$HOME/.roswell/bin"      # roswell installs
-mby_extend_path "$HOME/.cargo/bin"        # cargo (rust)
-mby_extend_path "$HOME/.npm-global/bin"   # npm (node)
-mby_extend_path "$HOME/go/bin"            # go packages
+mby_extend_path "$HOME/.local/bin"
+mby_extend_path "$HOME/.roswell/bin"            # roswell installs
+mby_extend_path "$HOME/.cargo/bin"              # cargo (rust)
+mby_extend_path "$HOME/go/bin"                  # go packages
 
 # Environment variables
 export EDITOR=hx
 export BROWSER=chromium
-export XDG_CONFIG_HOME="$HOME/.config"
+export npm_config_prefix="$HOME/.local"
 
 # Handy aliases
 alias naut='nautilus . > /dev/null &'
@@ -70,8 +71,7 @@ set_prompt()
   local txtpurple='$(tput setaf 5)'
   local txtcyan='$(tput setaf 6)'
 
-  # unicode "✗"
-  local fancyx='\342\234\227'
+  local fancyx='x'
   # unicode "✓"
   local checkmark='\342\234\223'
 

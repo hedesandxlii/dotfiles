@@ -1,0 +1,7 @@
+
+# Include my bashrc
+
+if [ -f "$HOME/.my_bashrc" ]
+then
+	source "$HOME/.my_bashrc"
+fi
