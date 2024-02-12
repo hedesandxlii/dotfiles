@@ -2,8 +2,8 @@
 command = "ruff-lsp"
 
 [language-server.pylsp]
-command = "pylsp"
-args = ["--log-file", "/home/andre/.cache/helix/pylsp.log"]
+command = "python3"
+args = ["-m", "pylsp", "--log-file", "/home/andre/.cache/helix/pylsp.log"]
 
 [language-server.pylsp.config.pylsp.plugins]
 flake8 = {enabled = false}

@@ -1,0 +1,34 @@
+theme = "flatwhite"
+
+[editor]
+line-number = "absolute"
+mouse = true
+rulers = []
+bufferline = "multiple"
+color-modes = true
+cursorline = true
+
+[editor.lsp]
+display-inlay-hints = true
+snippets = true
+
+[editor.cursor-shape]
+insert = "bar"
+
+[editor.whitespace]
+render = "all"
+
+[editor.whitespace.characters]
+space = "·"
+nbsp = "⍽"
+newline = "⏎"
+tab = "→"
+tabpad = " " # Tabs will look like "→   " (depending on tab width)
+
+[keys.normal]
+esc = ["collapse_selection", "keep_primary_selection"]
+C-r = ":reload"
+"C-S-r" = ":reload-all"
+
+[keys.normal.space.z]
+b = [":pipe boiler"]
