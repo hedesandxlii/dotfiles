@@ -1,18 +1,18 @@
-extend_path ()     { export PATH="$1:$PATH"; }  # extend PATH with $1
-mby_extend_path () { [ -d $1 ] && extend_path $1; }
-mby_source_file () { [ -f $1 ] && source $1; }  # source $1 if it's a file
-mby_run_file ()    { [ -f $1 ] && $1 || echo "$1 does not exist"; } 
-silent ()          { $1 &> /dev/null; return $?; } # run commands silently
+_prepend_path ()    { export PATH="$1:$PATH"; }  # extend PATH with $1
+prepend_path ()     { [ -d $1 ] && _prepend_path $1 || echo "$1 does not exist"; }
+mby_prepend_path () { [ -d $1 ] && _prepend_path $1; }
+mby_source_file ()  { [ -f $1 ] && source $1; }  # source $1 if it's a file
+mby_run_file ()     { [ -f $1 ] && $1 || echo "$1 does not exist"; }
+silent ()           { $1 &> /dev/null; return $?; } # run commands silently
 
 mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
 mby_source_file "/usr/share/git/git-prompt.sh"  # git PS1
 mby_source_file "$HOME/.bash_hostspecific"      # hostspecific aliases and env.vars
 mby_source_file "$HOME/.fzf.bash"               # fzf bash integration
 
-mby_extend_path "$HOME/.local/bin"
-mby_extend_path "$HOME/.roswell/bin"            # roswell installs
-mby_extend_path "$HOME/.cargo/bin"              # cargo (rust)
-mby_extend_path "$HOME/go/bin"                  # go packages
+mby_prepend_path "$HOME/.local/bin"
+mby_prepend_path "$HOME/.cargo/bin"  # cargo (rust)
+mby_prepend_path "$HOME/go/bin"      # go packages
 
 # Environment variables
 export EDITOR=hx
@@ -24,7 +24,7 @@ alias naut='nautilus . > /dev/null &'
 alias rm='rm --interactive=once --verbose'
 alias p="python3"
 alias pm="python3 -m"
-alias pip3='echo "using alias pip3=python3 -m pip"; python3 -m pip'
+alias tmux="tmux -2"
 
 # git aliases
 git config --global alias.co checkout
@@ -45,7 +45,7 @@ git config --global alias.cleen 'clean -xdf -e venv*/'
 git config --global alias.ups 'commit -a --amend --no-edit'
 
 # launch git-related apps
-git config --global alias.ui         '!gitui || echo "could not launch gitui :("'
+git config --global alias.ui         '!lazygit || echo "could not launch lazygit :("'
 
 # gerrit pushing
 git config --global alias.magic '!git push origin HEAD:refs/for/master || (read -p "Try "main" branch instead of "master"? (Y/n)" yn && [ "$yn" != "n" ] && git push origin HEAD:refs/for/main)'
@@ -54,9 +54,8 @@ git config --global alias.blackmagic 'push --no-verify origin HEAD:refs/for/mast
 # sets prompt (t.y.: https://stackoverflow.com/a/30963255)
 export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWDIRTYSTATE=1
-set_prompt()
+get_ps1()
 {
-  local last_errcode=$?
   local txtreset='$(tput sgr0)'
   local txtbold='$(tput bold)'
   local txtstandout='$(tput smso)'
@@ -71,39 +70,34 @@ set_prompt()
   local txtpurple='$(tput setaf 5)'
   local txtcyan='$(tput setaf 6)'
 
-  local fancyx='x'
-  # unicode "✓"
-  local checkmark='\342\234\223'
-
-  # "user@host : "
-  PS1="\[$txtreset\]\[$txtdim\]\u@\h :\[$txtreset\] "
-
   # current path
-  PS1+="\[$txtpurple\]\w "
-
-  PS1+="\[$txtreset\]("
-
-  # a red "✗" or a green "✓" and the error number
-  [[ $last_errcode == 0 ]] && PS1+="\[$txtgreen\]$checkmark " || PS1+="\[$txtred\]$fancyx "
-
-  PS1+="\[$txtreset\]$last_errcode) "
+  local path="\[$txtpurple\]\w\[$txtreset\]"
 
   # git branch
-  PS1+="\[$txtreset\]$(__git_ps1 '[ %s |')"
+  local git_head='$(__git_ps1 "%s")'
+  local commit_title='$(git log -n1 --format="format:%s" 2>/dev/null | cut -c1-50)'
 
-  commit_title="$(git log -n1 --format='format:%s' 2>/dev/null)"
-  if [ -n "$commit_title" ]
-  then
-    PS1+=' \[$txtdim\]$(echo $commit_title | cut -c1-30)...\[$txtreset\] ]'
-  fi
-
-  # newline to get prompt on separate line
-  PS1+="\n"
+  # commit_title="$(git log -n1 --format='format:%s' 2>/dev/null)"
+  # if [ -n "$commit_title" ]
+  # then
+    # PS1+=' \[$txtdim\]$(echo $commit_title | cut -c1-30)...\[$txtreset\] ]'
+  # fi
 
   # good old prompt, $ for user, # for root
-  PS1+="\\$ "
+  echo "$path [ $git_head | \[$txtdim\]$commit_title\[$txtreset\] ]\n\\$ "
 }
-PROMPT_COMMAND='set_prompt'
+export PS1=$(get_ps1)
+
+
+## Setup
+
+### pyenv
+
+export PYENV_ROOT="$HOME/.pyenv"
+prepend_path "$PYENV_ROOT/bin"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
 
 ## Utility functions
 
@@ -157,4 +151,8 @@ ahclipcmd () {
   require "xclip" || return 1
 
   history | cut -d' ' -f4- | tail -n2 | head -n1 | ahclip
+}
+
+pylsp-setup () {
+  pip install python-lsp-server pylsp-mypy pylsp-rope python-lsp-ruff
 }
