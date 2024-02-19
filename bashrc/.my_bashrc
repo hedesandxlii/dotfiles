@@ -154,5 +154,5 @@ ahclipcmd () {
 }
 
 pylsp-setup () {
-  pip install python-lsp-server pylsp-mypy pylsp-rope python-lsp-ruff
+  pip install python-lsp-server pylsp-mypy pylsp-rope ruff-lsp
 }
