@@ -19,7 +19,6 @@ all: $(TARGETS)
 /snap/bin/cargo:
 	sudo snap install rustup
 
-
 bashrc: /usr/bin/stow
 	$(STOW) --ignore='.*include_snippet' bashrc
 	cat bashrc/include_snippet >> ~/.bashrc
@@ -27,11 +26,8 @@ bashrc: /usr/bin/stow
 helix: /usr/bin/stow /snap/bin/hx
 	$(STOW) helix
 
-tmux: /usr/bin/tmux tms
+tmux: /usr/bin/tmux
 	$(STOW) tmux
-
-tms: /snap/bin/cargo
-	cargo install tmux-sessionizer
 
 
 clean:
