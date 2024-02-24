@@ -19,6 +19,9 @@ all: $(TARGETS)
 /snap/bin/cargo:
 	sudo snap install rustup
 
+/usr/bin/fzf:
+	sudo apt install fzf
+
 bashrc: /usr/bin/stow
 	$(STOW) --ignore='.*include_snippet' bashrc
 	cat bashrc/include_snippet >> ~/.bashrc
@@ -26,7 +29,7 @@ bashrc: /usr/bin/stow
 helix: /usr/bin/stow /snap/bin/hx
 	$(STOW) helix
 
-tmux: /usr/bin/tmux
+tmux: /usr/bin/tmux /usr/bin/fzf
 	$(STOW) tmux
 
 
