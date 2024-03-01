@@ -89,16 +89,6 @@ get_ps1()
 export PS1=$(get_ps1)
 
 
-## Setup
-
-### pyenv
-
-export PYENV_ROOT="$HOME/.pyenv"
-prepend_path "$PYENV_ROOT/bin"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-
 ## Utility functions
 
 # Returns the unmerged file names
