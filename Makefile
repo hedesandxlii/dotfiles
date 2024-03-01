@@ -1,47 +1,34 @@
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux pipx python-lsps scripts
+TARGETS := helix bashrc tmux pipx python-lsp-server scripts
 
 
 .PHONY: $(TARGETS)
 
 all: $(TARGETS)
 
+apt-%:
+	sudo apt install -y $*
 
-/usr/bin/stow:
-	sudo apt install stow
+snap-%:
+	sudo snap install --classic $*
 
-/snap/bin/hx:
-	sudo snap install --classic helix
-
-/usr/bin/tmux:
-	sudo snap install --classic helix
-
-/snap/bin/cargo:
-	sudo snap install rustup
-
-/usr/bin/fzf:
-	sudo apt install fzf
-
-pipx:
-	sudo apt install pipx
-
-python-lsps:
+python-lsp-server: apt-pipx
 	pipx install python-lsp-server
 	pipx inject python-lsp-server pylsp-mypy python-lsp-ruff
 
-scripts: /usr/bin/stow
+scripts: apt-stow
 	$(STOW) scripts
 
-bashrc: /usr/bin/stow
+bashrc: apt-stow
 	$(STOW) --ignore='.*include_snippet' bashrc
 	cat bashrc/include_snippet >> ~/.bashrc
 
-helix: /usr/bin/stow /snap/bin/hx
+helix: apt-stow snap-helix
 	$(STOW) helix
 
-tmux: /usr/bin/tmux /usr/bin/fzf
+tmux: apt-stow apt-tmux apt-fzf
 	$(STOW) tmux
 
 
-clean:
+clean: apt-stow
 	$(STOW) --delete $(TARGETS)
