@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# make global mypy happy
+PYTHONPATH=$([ -z "$VIRTUAL_ENV" ] || find "$VIRTUAL_ENV" -maxdepth 3 -name site-packages -type d) \
+  $EDITOR $@

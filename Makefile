@@ -1,5 +1,5 @@
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux
+TARGETS := helix bashrc tmux pipx python-lsps scripts
 
 
 .PHONY: $(TARGETS)
@@ -21,6 +21,16 @@ all: $(TARGETS)
 
 /usr/bin/fzf:
 	sudo apt install fzf
+
+pipx:
+	sudo apt install pipx
+
+python-lsps:
+	pipx install python-lsp-server
+	pipx inject python-lsp-server pylsp-mypy python-lsp-ruff
+
+scripts: /usr/bin/stow
+	$(STOW) scripts
 
 bashrc: /usr/bin/stow
 	$(STOW) --ignore='.*include_snippet' bashrc

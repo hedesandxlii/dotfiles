@@ -1,9 +1,6 @@
-[language-server.ruff-lsp]
-command = "ruff-lsp"
-
 [language-server.pylsp]
-command = "python3"
-args = ["-m", "pylsp", "--log-file", "/home/andre/.cache/helix/pylsp.log"]
+command = "pylsp"
+args = ["--log-file", "/home/andre/.cache/helix/pylsp.log"]
 
 [language-server.pylsp.config.pylsp.plugins]
 flake8 = {enabled = false}
@@ -20,4 +17,4 @@ file-types = ["py", "pyi"]
 roots = ["pyproject.toml", "setup.cfg", "setup.py"]
 formatter = { command = "black", args = ["-", "-q"] }
 auto-format = false
-language-servers = [ { name = "pylsp"}, {name = "ruff-lsp" } ]
+language-servers = [ { name = "pylsp"} ]
