@@ -142,3 +142,7 @@ ahclipcmd () {
 
   history | cut -d' ' -f4- | tail -n2 | head -n1 | ahclip
 }
+
+v () {
+  source $(ls **/bin/activate | fzf --select-1 --exit-0)
+}
