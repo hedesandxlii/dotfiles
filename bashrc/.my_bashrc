@@ -142,7 +142,3 @@ ahclipcmd () {
 
   history | cut -d' ' -f4- | tail -n2 | head -n1 | ahclip
 }
-
-pylsp-setup () {
-  pip install python-lsp-server pylsp-mypy pylsp-rope ruff-lsp
-}
