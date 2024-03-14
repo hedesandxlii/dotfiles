@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 
+echo-child-dirs () { find "$1" -mindepth 1 -maxdepth 1 -type d; }
+
+tmux-sessionizer-projects() {
+    echo-child-dirs ~/projects;
+    echo-child-dirs ~/repos;
+
+    [ -d ~/dotfiles ] && echo ~/dotfiles;
+}
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(echo "$TMUX_SESSIONIZER_PROJECTS" | fzf)
+    selected=$(tmux-sessionizer-projects | fzf)
 fi
 
 if [[ -z $selected ]]; then
