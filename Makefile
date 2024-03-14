@@ -1,5 +1,5 @@
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux pipx python-lsp-server scripts
+TARGETS := helix bashrc tmux scripts
 
 
 .PHONY: $(TARGETS)
@@ -11,10 +11,6 @@ apt-%:
 
 snap-%:
 	sudo snap install --classic $*
-
-python-lsp-server: apt-pipx
-	pipx install python-lsp-server
-	pipx inject python-lsp-server pylsp-mypy python-lsp-ruff
 
 scripts: apt-stow
 	$(STOW) scripts

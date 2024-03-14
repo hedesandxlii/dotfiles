@@ -143,6 +143,19 @@ ahclipcmd () {
   history | cut -d' ' -f4- | tail -n2 | head -n1 | ahclip
 }
 
+
+install-pylsps () {
+  [ -z "$VIRTUAL_ENV" ] \
+    && echo "not in a virtal environment, not installing lsp" \
+    || pip install python-lsp-server pylsp-mypy python-lsp-ruff
+}
+
+create-venv () { python3 -m venv venv; }
+
 v () {
-  source $(ls **/bin/activate | fzf --select-1 --exit-0)
+  venvs = $(find . -mindepth 3 -maxdepth 3 -name activate )
+
+  [ -z "$venvs" ] && create-venv
+
+  source $(venvs | fzf --select-1 --exit-0)
 }
