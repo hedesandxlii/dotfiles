@@ -151,11 +151,10 @@ install-pylsps () {
 }
 
 create-venv () { python3 -m venv venv; }
+echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate; }
 
 v () {
-  venvs = $(find . -mindepth 3 -maxdepth 3 -name activate )
+  [ -z "$(echo-venvs)" ] && create-venv
 
-  [ -z "$venvs" ] && create-venv
-
-  source $(venvs | fzf --select-1 --exit-0)
+  source $(echo-venvs | fzf --select-1 --exit-0)
 }
