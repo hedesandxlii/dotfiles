@@ -17,7 +17,6 @@ mby_prepend_path "$HOME/go/bin"      # go packages
 # Environment variables
 export EDITOR=hx
 export BROWSER=chromium
-export npm_config_prefix="$HOME/.local"
 
 # Handy aliases
 alias naut='nautilus . > /dev/null &'
