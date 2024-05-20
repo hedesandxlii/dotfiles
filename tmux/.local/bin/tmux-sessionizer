@@ -5,6 +5,7 @@ echo-child-dirs () { find "$1" -mindepth 1 -maxdepth 1 -type d; }
 tmux-sessionizer-projects() {
     echo-child-dirs ~/projects;
     echo-child-dirs ~/repos;
+    echo-child-dirs ~/work;
 
     [ -d ~/dotfiles ] && echo ~/dotfiles;
 }

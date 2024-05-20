@@ -11,8 +11,9 @@ mby_source_file "$HOME/.bash_hostspecific"      # hostspecific aliases and env.v
 mby_source_file "$HOME/.fzf.bash"               # fzf bash integration
 
 mby_prepend_path "$HOME/.local/bin"
-mby_prepend_path "$HOME/.cargo/bin"  # cargo (rust)
-mby_prepend_path "$HOME/go/bin"      # go packages
+mby_prepend_path "$HOME/.cargo/bin"       # cargo (rust)
+mby_prepend_path "$HOME/.npm-global/bin"  # "npm -g" bins
+mby_prepend_path "$HOME/go/bin"           # go packages
 
 # Environment variables
 export EDITOR=hx
@@ -149,11 +150,11 @@ install-pylsps () {
     || pip install python-lsp-server pylsp-mypy python-lsp-ruff
 }
 
-create-venv () { python3 -m venv venv; }
-echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate; }
+create-venv () { python3 -m venv ${1:-venv}; }
+echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate | grep ${1:-venv}; }
 
 v () {
-  [ -z "$(echo-venvs)" ] && create-venv
+  [ -z "$(echo-venvs $1)" ] && create-venv $1
 
   source $(echo-venvs | fzf --select-1 --exit-0)
 }

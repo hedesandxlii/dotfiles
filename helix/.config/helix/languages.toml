@@ -1,6 +1,19 @@
+# Upstream languages.toml:
+# https://github.com/helix-editor/helix/blob/master/languages.toml
+
+[language-server.pyright]
+command = "pyright-langserver"
+args = ["--stdio"]
+
+[language-server.ruff-lsp]
+command = "ruff-lsp"
+
 [language-server.pylsp]
 command = "pylsp"
 args = ["--log-file", "/home/andre/.cache/helix/pylsp.log"]
+
+[language-server.helix-snippets-ls]
+command = "helix-snippets-ls"
 
 [language-server.pylsp.config.pylsp.plugins]
 flake8 = {enabled = false}
@@ -12,9 +25,26 @@ pylint = {enabled = false}
 yapf = {enabled = false}
 
 [[language]]
+name = "c"
+scope = "source.c"
+injection-regex = "c"
+file-types = ["c", "h"]
+comment-token = "//"
+block-comment-tokens = { start = "/*", end = "*/" }
+language-servers = [ { name = "clangd" }, { name = "helix-snippets-ls" } ]
+indent = { tab-width = 4, unit = "\t" }
+
+[[language]]
 name = "python"
 file-types = ["py", "pyi"]
 roots = ["pyproject.toml", "setup.cfg", "setup.py"]
-formatter = { command = "black", args = ["-", "-q"] }
+indent = { tab-width = 4, unit = "    " }
 auto-format = false
-language-servers = [ { name = "pylsp"} ]
+language-servers = [ { name = "pyright"}, { name = "helix-snippets-ls" } ]
+
+[[language]]
+name = "rst"
+scope = "source.rst"
+comment-token = ".."
+indent = { tab-width = 3, unit = "   " }
+file-types = ["rst"]

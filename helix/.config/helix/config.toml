@@ -1,4 +1,4 @@
-theme = "flatwhite"
+theme = "dracula_at_night"
 
 [editor]
 line-number = "absolute"
@@ -16,7 +16,7 @@ snippets = true
 insert = "bar"
 
 [editor.whitespace]
-render = "all"
+render = "none" # or "all"
 
 [editor.whitespace.characters]
 space = "·"
@@ -28,7 +28,6 @@ tabpad = " " # Tabs will look like "→   " (depending on tab width)
 [keys.normal]
 esc = ["collapse_selection", "keep_primary_selection"]
 C-r = ":reload"
-"C-S-r" = ":reload-all"
 
 [keys.normal.space.z]
 b = [":pipe boiler"]
