@@ -1,5 +1,5 @@
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux scripts nvim
+TARGETS := helix bashrc tmux scripts nvim fzf
 
 
 .PHONY: $(TARGETS)
@@ -25,9 +25,12 @@ helix: apt-stow snap-helix
 nvim: snap-nvim
 	$(STOW) nvim
 
-tmux: apt-stow apt-tmux apt-fzf
+tmux: apt-stow apt-tmux fzf
 	$(STOW) tmux
 
+fzf:
+	- git clone --depth 1 https://github.com/junegunn/fzf.git ~/repos/fzf
+	~/repos/fzf/install --completion --key-bindings --no-zsh --no-fish
 
 clean: apt-stow
 	$(STOW) --delete $(TARGETS)

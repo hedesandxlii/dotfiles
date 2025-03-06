@@ -8,20 +8,19 @@ silent ()           { $1 &> /dev/null; return $?; } # run commands silently
 mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
 mby_source_file "/usr/share/git/git-prompt.sh"  # git PS1
 mby_source_file "$HOME/.bash_hostspecific"      # hostspecific aliases and env.vars
-mby_source_file "$HOME/.fzf.bash"               # fzf bash integration
 
 mby_prepend_path "$HOME/.local/bin"
 mby_prepend_path "$HOME/.cargo/bin"       # cargo (rust)
 mby_prepend_path "$HOME/.npm-global/bin"  # "npm -g" bins
 mby_prepend_path "$HOME/go/bin"           # go packages
+mby_prepend_path "$HOME/.local/bin/flutter/bin"
 
 # Environment variables
 export EDITOR=hx
 export BROWSER=chromium
 
 # Handy aliases
-alias naut='nautilus . > /dev/null &'
-alias rm='rm --interactive=once --verbose'
+alias rm='rm --interactive=once'
 alias p="python3"
 alias pm="python3 -m"
 alias tmux="tmux -2"
@@ -41,15 +40,20 @@ git config --global alias.unmodify 'checkout --'
 git config --global alias.lg 'log --oneline -n10'
 git config --global alias.lgg 'log --graph --oneline --branches -n 20 HEAD'
 git config --global alias.detach 'checkout --detach'
-git config --global alias.cleen 'clean -xdf -e venv*/'
+git config --global alias.cleen 'clean -df'
 git config --global alias.ups 'commit -a --amend --no-edit'
-
-# launch git-related apps
-git config --global alias.ui         '!lazygit || echo "could not launch lazygit :("'
+git config --global alias.ui  '!lazygit || echo "could not launch lazygit :("'
 
 # gerrit pushing
-git config --global alias.magic '!git push origin HEAD:refs/for/master || (read -p "Try "main" branch instead of "master"? (Y/n)" yn && [ "$yn" != "n" ] && git push origin HEAD:refs/for/main)'
+git config --global alias.magic '!git push origin HEAD:refs/for/master'
 git config --global alias.blackmagic 'push --no-verify origin HEAD:refs/for/master'
+
+# history sharing (t.y.: https://unix.stackexchange.com/a/48113)
+export HISTCONTROL=ignoredups:erasedups
+export HISTSIZE=100000
+export HISTFILESIZE=$HISTSIZE
+shopt -s histappend
+# export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # sets prompt (t.y.: https://stackoverflow.com/a/30963255)
 export GIT_PS1_SHOWCOLORHINTS=1
@@ -88,6 +92,7 @@ get_ps1()
 }
 export PS1=$(get_ps1)
 
+eval "$(fzf --bash)"
 
 ## Utility functions
 
@@ -120,7 +125,7 @@ rename-symbol () {
 
   root=${3:-.}
 
-  grep -lr -1 $1 $root | xargs -i@ sed -i "s/$1/$2/g" @
+  git grep -lr -1 $1 $root | xargs -i@ sed -i "s|$1|$2|g" @
 
   echo "Changed all occurences under \"$root\" from"
   echo "\"$1\""
@@ -129,12 +134,24 @@ rename-symbol () {
 }
 
 
-# handy clipboard. Example:
+# handy clipboard copy.
+#
+# Example:
 #    cat my_file.txt | ahclip
 ahclip () {
 	require "xclip" || return 1
 
 	cat - | xclip -selection clipboard
+}
+
+# handy clipboard paste.
+#
+# Example:
+#    cat my_file.txt | ahclip
+ahpaste () {
+	require "xclip" || return 1
+
+	xclip -o -selection clipboard
 }
 
 ahclipcmd () {
@@ -144,17 +161,47 @@ ahclipcmd () {
 }
 
 
-install-pylsps () {
-  [ -z "$VIRTUAL_ENV" ] \
-    && echo "not in a virtal environment, not installing lsp" \
-    || pip install python-lsp-server pylsp-mypy python-lsp-ruff
+create-venv () {
+  echo "Creating virtualenv with uv"
+  uv venv
 }
-
-create-venv () { python3 -m venv ${1:-venv}; }
-echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate | grep ${1:-venv}; }
+echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate | grep venv; }
 
 v () {
-  [ -z "$(echo-venvs $1)" ] && create-venv $1
+  [ -z "$(echo-venvs)" ] && create-venv "$1"
 
   source $(echo-venvs | fzf --select-1 --exit-0)
+}
+
+# $1 is a git ref (default HEAD)
+# $2 is an file filter command (default "cat", i.e. ignore nothing)
+suggest-reviewers () {
+  commit=${1:-HEAD}
+  filter_cmd=${2:-"cat"}
+
+  echo "Suggested reviewers for $(git log $commit --oneline -n1)"
+  file-owner $commit $(git diff $commit~1 $commit --name-only | $filter_cmd )
+}
+
+cdp () {
+  echo-child-dirs () { find "$1" -mindepth 1 -maxdepth 1 -type d; }
+
+  project-dirs() {
+      echo-child-dirs ~/projects;
+      echo-child-dirs ~/repos;
+      echo-child-dirs ~/work;
+
+      [ -d ~/dotfiles ] && echo ~/dotfiles;
+  }
+
+  selected=$(project-dirs | fzf)
+  [ -d "$selected" ] && cd "$selected" || echo "'$selected' is not a directory."
+}
+
+naut () {
+  nautilus "${1:-.}" 2>/dev/null &
+}
+
+open () {
+  xdg-open "$1" &>/dev/null
 }
