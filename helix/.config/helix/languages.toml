@@ -22,7 +22,7 @@ name = "python"
 auto-format = true
 language-servers = [
   # { name = "dls", only-features = [ "diagnostics" ] },
-  # { name = "ruff" },
+  { name = "ruff" },
   # { name = "jedi" },
   { name = "pylsp" },
   { name = "scls" },
