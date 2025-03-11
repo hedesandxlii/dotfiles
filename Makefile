@@ -1,6 +1,7 @@
 STOW ?= stow -v -t ${HOME}
 TARGETS := helix bashrc tmux scripts
 
+$(wildcard *): apt-stow  # Makes everything dependant on stow
 
 .PHONY: $(TARGETS)
 
@@ -9,19 +10,19 @@ all: $(TARGETS)
 apt-%:
 	sudo apt install -y $*
 
-scripts: apt-stow
+scripts:
 	$(STOW) scripts
 
-bashrc: apt-stow apt-fzf
+bashrc: apt-fzf
 	$(STOW) --ignore='.*include_snippet' bashrc
 	cat bashrc/include_snippet >> ~/.bashrc
 
-helix: apt-stow
+helix:
 	cargo install --path submodules/helix/helix-term --locked
 	$(STOW) helix
 
-tmux: apt-stow apt-tmux apt-fzf
+tmux: apt-tmux apt-fzf
 	$(STOW) tmux
 
-clean: apt-stow
+clean:
 	$(STOW) --delete $(TARGETS)
