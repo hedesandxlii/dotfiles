@@ -1,3 +1,6 @@
 [submodule "dwm"]
 	path = dwm
 	url = https://github.com/hedesandxlii/dwm.git
+[submodule "submodules/helix"]
+	path = submodules/helix
+	url = https://github.com/helix-editor/helix

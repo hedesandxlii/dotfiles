@@ -19,7 +19,8 @@ bashrc: apt-stow
 	$(STOW) --ignore='.*include_snippet' bashrc
 	cat bashrc/include_snippet >> ~/.bashrc
 
-helix: apt-stow snap-helix
+helix: apt-stow
+	cargo install --path submodules/helix/helix-term --locked
 	$(STOW) helix
 
 tmux: apt-stow apt-tmux fzf
