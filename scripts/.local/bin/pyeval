@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+import sys
+import pathlib
+
+ns = {}
+
+try:
+    (_, context_file_path) = sys.argv
+except ValueError:
+    pass
+else:
+    content = pathlib.Path(context_file_path).read_text()
+    try:
+        exec(content, ns)
+    except NameError as ne:
+        ne.add_note(f"Following symbols are available: {', '.join(ns)}")
+        raise ne
+
+
+print(eval(sys.stdin.read(), ns))
