@@ -1,5 +1,5 @@
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux scripts fzf
+TARGETS := helix bashrc tmux scripts
 
 
 .PHONY: $(TARGETS)
@@ -15,7 +15,7 @@ snap-%:
 scripts: apt-stow
 	$(STOW) scripts
 
-bashrc: apt-stow
+bashrc: apt-stow apt-fzf
 	$(STOW) --ignore='.*include_snippet' bashrc
 	cat bashrc/include_snippet >> ~/.bashrc
 
@@ -23,12 +23,8 @@ helix: apt-stow
 	cargo install --path submodules/helix/helix-term --locked
 	$(STOW) helix
 
-tmux: apt-stow apt-tmux fzf
+tmux: apt-stow apt-tmux apt-fzf
 	$(STOW) tmux
-
-fzf:
-	- git clone --depth 1 https://github.com/junegunn/fzf.git ~/repos/fzf
-	~/repos/fzf/install --completion --key-bindings --no-zsh --no-fish
 
 clean: apt-stow
 	$(STOW) --delete $(TARGETS)
