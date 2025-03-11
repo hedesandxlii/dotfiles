@@ -9,9 +9,6 @@ all: $(TARGETS)
 apt-%:
 	sudo apt install -y $*
 
-snap-%:
-	sudo snap install --classic $*
-
 scripts: apt-stow
 	$(STOW) scripts
 
