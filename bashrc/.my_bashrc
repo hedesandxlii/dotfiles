@@ -58,37 +58,28 @@ shopt -s histappend
 # sets prompt (t.y.: https://stackoverflow.com/a/30963255)
 export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWDIRTYSTATE=1
+
+export __TXT_RESET="$(tput sgr0)"
+export __TXT_BOLD="$(tput bold)"
+export __TXT_STANDOUT="$(tput smso)"
+export __TXT_DIM="$(tput dim)"
+export __TXT_ULINE_START="$(tput smul)"
+export __TXT_ULINE_END="$(tput rmul)"
+export __TXT_RED="$(tput setaf 1)"
+export __TXT_PURPLE="$(tput setaf 5)"
+
 get_ps1()
 {
-  local txtreset='$(tput sgr0)'
-  local txtbold='$(tput bold)'
-  local txtstandout='$(tput smso)'
-  local txtdim='$(tput dim)'
-  local txtuline_start='$(tput smul)'
-  local txtuline_end='$(tput rmul)'
+  local exit_code='$(ec=$?; [ "$ec" -eq "0" ] && echo $ec || echo ${__TXT_RED}${__TXT_BOLD}$ec${__TXT_RESET})'
 
-  local txtred='$(tput setaf 1)'
-  local txtgreen='$(tput setaf 2)'
-  local txtyellow='$(tput setaf 3)'
-  local txtblue='$(tput setaf 4)'
-  local txtpurple='$(tput setaf 5)'
-  local txtcyan='$(tput setaf 6)'
-
-  # current path
-  local path="\[$txtpurple\]\w\[$txtreset\]"
+  local current_wd="${__TXT_PURPLE}\w${__TXT_RESET}"
 
   # git branch
   local git_head='$(__git_ps1 "%s")'
-  local commit_title='$(git log -n1 --format="format:%s" 2>/dev/null | cut -c1-50)'
-
-  # commit_title="$(git log -n1 --format='format:%s' 2>/dev/null)"
-  # if [ -n "$commit_title" ]
-  # then
-    # PS1+=' \[$txtdim\]$(echo $commit_title | cut -c1-30)...\[$txtreset\] ]'
-  # fi
+  local commit_title="${__TXT_DIM}\$(git log -n1 --format="format:%s" 2>/dev/null | cut -c1-50)${__TXT_RESET}"
 
   # good old prompt, $ for user, # for root
-  echo "$path [ $git_head | \[$txtdim\]$commit_title\[$txtreset\] ]\n\\$ "
+  echo "$current_wd [$exit_code] [ $git_head | $commit_title ]\n\\$ "
 }
 export PS1=$(get_ps1)
 
