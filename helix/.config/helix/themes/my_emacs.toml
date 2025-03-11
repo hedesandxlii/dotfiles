@@ -1,0 +1,6 @@
+inherits = "emacs"
+
+"comment" = { fg = "gray60" }
+"ui.virtual.jump-label"	= { fg = "firebrick", modifiers = [ "bold", "italic" ] }
+"ui.virtual.indent-guide" = { fg = "gray90" }
+"ui.virtual.whitespace" = { fg = "gray80" }
