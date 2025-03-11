@@ -1,5 +1,5 @@
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux scripts nvim fzf
+TARGETS := helix bashrc tmux scripts fzf
 
 
 .PHONY: $(TARGETS)
@@ -21,9 +21,6 @@ bashrc: apt-stow
 
 helix: apt-stow snap-helix
 	$(STOW) helix
-
-nvim: snap-nvim
-	$(STOW) nvim
 
 tmux: apt-stow apt-tmux fzf
 	$(STOW) tmux
