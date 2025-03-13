@@ -14,9 +14,9 @@ scripts:
 	$(STOW) scripts
 
 bashrc: apt-fzf
-	echo "[ -f $(realpath bashrc/.my_bashrc) ] \\" >> ~/.bashrc
-	echo "    && source $(realpath bashrc/.my_bashrc) \\" >> ~/.bashrc
-	echo "    || echo No file $(realpath bashrc/.my_bashrc)" >> ~/.bashrc
+	echo "[ -f $(realpath bashrc/my_bashrc.bash) ] \\" >> ~/.bashrc
+	echo "    && source $(realpath bashrc/my_bashrc.bash) \\" >> ~/.bashrc
+	echo "    || echo No file $(realpath bashrc/my_bashrc.bash)" >> ~/.bashrc
 
 helix:
 	cargo install --path submodules/helix/helix-term --locked
