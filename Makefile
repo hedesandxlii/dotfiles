@@ -14,8 +14,9 @@ scripts:
 	$(STOW) scripts
 
 bashrc: apt-fzf
-	$(STOW) --ignore='.*include_snippet' bashrc
-	cat bashrc/include_snippet >> ~/.bashrc
+	echo "[ -f $(realpath bashrc/.my_bashrc) ] \\" >> ~/.bashrc
+	echo "    && source $(realpath bashrc/.my_bashrc) \\" >> ~/.bashrc
+	echo "    || echo No file $(realpath bashrc/.my_bashrc)" >> ~/.bashrc
 
 helix:
 	cargo install --path submodules/helix/helix-term --locked
