@@ -15,7 +15,14 @@ mby_prepend_path "$HOME/.npm-global/bin"  # "npm -g" bins
 mby_prepend_path "$HOME/go/bin"           # go packages
 mby_prepend_path "$HOME/.local/bin/flutter/bin"
 
+helix_runtime_value () {
+  my_bashrc_path="$(realpath $BASH_SOURCE)"
+  dotfiles_root="$(dirname $(dirname $my_bashrc_path))"
+  echo "${dotfiles_root}/submodules/helix/runtime"
+}
+
 # Environment variables
+export HELIX_RUNTIME=$(helix_runtime_value)
 export EDITOR=hx
 export BROWSER=chromium
 
