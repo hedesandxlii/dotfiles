@@ -99,6 +99,11 @@ conflicts () {
   git diff --name-only --diff-filter=U
 }
 
+# Returns the files modified in previous commit
+changed () {
+  git diff HEAD~1 --name-only
+}
+
 # Returns & prints error if any command in $@ does not exists
 require () {
   for cmd in $@; do
