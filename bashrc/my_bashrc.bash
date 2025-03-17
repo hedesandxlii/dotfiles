@@ -1,9 +1,12 @@
 _prepend_path ()    { export PATH="$1:$PATH"; }  # extend PATH with $1
-prepend_path ()     { [ -d $1 ] && _prepend_path $1 || echo "$1 does not exist"; }
-mby_prepend_path () { [ -d $1 ] && _prepend_path $1; }
-mby_source_file ()  { [ -f $1 ] && source $1; }  # source $1 if it's a file
-mby_run_file ()     { [ -f $1 ] && $1 || echo "$1 does not exist"; }
-silent ()           { $1 &> /dev/null; return $?; } # run commands silently
+prepend_path ()     { [ -d "$1" ] && _prepend_path "$1" || echo "$1 does not exist"; }
+mby_prepend_path () { [ -d "$1" ] && _prepend_path "$1"; }
+mby_run_file ()     { [ -f "$1" ] && "$1" || echo "$1 does not exist"; }
+silent ()           { "$1" &> /dev/null; return $?; } # run commands silently
+mby_source_file ()  {
+  # shellcheck source=/dev/null
+  [ -f "$1" ] && source "$1";
+}
 
 mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
 mby_source_file "/usr/share/git/git-prompt.sh"  # git PS1
@@ -15,14 +18,16 @@ mby_prepend_path "$HOME/.npm-global/bin"  # "npm -g" bins
 mby_prepend_path "$HOME/go/bin"           # go packages
 mby_prepend_path "$HOME/.local/bin/flutter/bin"
 
-helix_runtime_value () {
-  my_bashrc_path="$(realpath $BASH_SOURCE)"
-  dotfiles_root="$(dirname $(dirname $my_bashrc_path))"
+get_helix_runtime_value () {
+  bash_source="${BASH_SOURCE[0]}"
+  my_bashrc_path="$(realpath "$bash_source")"
+  dotfiles_root="$(dirname "$(dirname "$my_bashrc_path")")"
   echo "${dotfiles_root}/submodules/helix/runtime"
 }
 
 # Environment variables
-export HELIX_RUNTIME=$(helix_runtime_value)
+helix_runtime_value=$(get_helix_runtime_value)
+export HELIX_RUNTIME="$helix_runtime_value"
 export EDITOR=hx
 export BROWSER=chromium
 
@@ -66,29 +71,40 @@ shopt -s histappend
 export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-export __TXT_RESET="$(tput sgr0)"
-export __TXT_BOLD="$(tput bold)"
-export __TXT_STANDOUT="$(tput smso)"
-export __TXT_DIM="$(tput dim)"
-export __TXT_ULINE_START="$(tput smul)"
-export __TXT_ULINE_END="$(tput rmul)"
-export __TXT_RED="$(tput setaf 1)"
-export __TXT_PURPLE="$(tput setaf 5)"
+txt_reset="$(tput sgr0)"
+txt_bold="$(tput bold)"
+txt_standout="$(tput smso)"
+txt_dim="$(tput dim)"
+txt_uline_start="$(tput smul)"
+txt_uline_end="$(tput rmul)"
+txt_red="$(tput setaf 1)"
+txt_purple="$(tput setaf 5)"
+export __TXT_RESET="$txt_reset"
+export __TXT_BOLD="$txt_bold"
+export __TXT_STANDOUT="$txt_standout"
+export __TXT_DIM="$txt_dim"
+export __TXT_ULINE_START="$txt_uline_start"
+export __TXT_ULINE_END="$txt_uline_end"
+export __TXT_RED="$txt_red"
+export __TXT_PURPLE="$txt_purple"
 
 get_ps1()
 {
+  # shellcheck disable=SC2016
   local exit_code='$(ec=$?; [ "$ec" -eq "0" ] && echo $ec || echo ${__TXT_RED}${__TXT_BOLD}$ec${__TXT_RESET})'
 
   local current_wd="${__TXT_PURPLE}\w${__TXT_RESET}"
 
   # git branch
+  # shellcheck disable=SC2016
   local git_head='$(__git_ps1 "%s")'
-  local commit_title="${__TXT_DIM}\$(git log -n1 --format="format:%s" 2>/dev/null | cut -c1-50)${__TXT_RESET}"
+  local commit_title="${__TXT_DIM}\$(git log -n1 --format=\"format:%s\" 2>/dev/null | cut -c1-50)${__TXT_RESET}"
 
   # good old prompt, $ for user, # for root
-  echo "$current_wd [$exit_code] [ $git_head | $commit_title ]\n\\$ "
+  echo -e "$current_wd [$exit_code] [ $git_head | $commit_title ]\n\\$ "
 }
-export PS1=$(get_ps1)
+ps1=$(get_ps1)
+export PS1="$ps1"
 
 eval "$(fzf --bash)"
 
@@ -106,7 +122,7 @@ changed () {
 
 # Returns & prints error if any command in $@ does not exists
 require () {
-  for cmd in $@; do
+  for cmd in "$@"; do
     if ! silent "command -v $cmd"; then
 	    echo "$cmd does not exist"
 	    return 1
@@ -128,7 +144,7 @@ rename-symbol () {
 
   root=${3:-.}
 
-  git grep -lr -1 $1 $root | xargs -i@ sed -i "s|$1|$2|g" @
+  git grep -lr -1 "$1" "$root" | xargs -I % sed -i "s|$1|$2|g" %
 
   echo "Changed all occurences under \"$root\" from"
   echo "\"$1\""
@@ -173,7 +189,8 @@ echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate | grep venv; }
 v () {
   [ -z "$(echo-venvs)" ] && create-venv "$1"
 
-  source $(echo-venvs | fzf --select-1 --exit-0)
+  # shellcheck disable=SC1090
+  source "$(echo-venvs | fzf --select-1 --exit-0)"
 }
 
 # $1 is a git ref (default HEAD)
@@ -182,8 +199,8 @@ suggest-reviewers () {
   commit=${1:-HEAD}
   filter_cmd=${2:-"cat"}
 
-  echo "Suggested reviewers for $(git log $commit --oneline -n1)"
-  file-owner $commit $(git diff $commit~1 $commit --name-only | $filter_cmd )
+  echo "Suggested reviewers for $(git log "$commit" --oneline -n1)"
+  file-owner "$commit" "$(git diff "$commit"~1 "$commit" --name-only | $filter_cmd )"
 }
 
 cdp () {

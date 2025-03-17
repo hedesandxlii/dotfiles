@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+shellcheck ./bashrc/my_bashrc.bash
