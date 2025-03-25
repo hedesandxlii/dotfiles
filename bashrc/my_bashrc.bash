@@ -2,7 +2,6 @@ _prepend_path ()    { export PATH="$1:$PATH"; }  # extend PATH with $1
 prepend_path ()     { [ -d "$1" ] && _prepend_path "$1" || echo "$1 does not exist"; }
 mby_prepend_path () { [ -d "$1" ] && _prepend_path "$1"; }
 mby_run_file ()     { [ -f "$1" ] && "$1" || echo "$1 does not exist"; }
-silent ()           { "$1" &> /dev/null; return $?; } # run commands silently
 mby_source_file ()  {
   # shellcheck source=/dev/null
   [ -f "$1" ] && source "$1";
@@ -120,15 +119,6 @@ changed () {
   git diff HEAD~1 --name-only
 }
 
-# Returns & prints error if any command in $@ does not exists
-require () {
-  for cmd in "$@"; do
-    if ! silent "command -v $cmd"; then
-	    echo "$cmd does not exist"
-	    return 1
-  	fi
-  done
-}
 
 
 # grep + sed based symbol renamer
@@ -158,8 +148,6 @@ rename-symbol () {
 # Example:
 #    cat my_file.txt | ahclip
 ahclip () {
-	require "xclip" || return 1
-
 	cat - | xclip -selection clipboard
 }
 
@@ -168,14 +156,10 @@ ahclip () {
 # Example:
 #    cat my_file.txt | ahclip
 ahpaste () {
-	require "xclip" || return 1
-
 	xclip -o -selection clipboard
 }
 
 ahclipcmd () {
-  require "xclip" || return 1
-
   history | cut -d' ' -f4- | tail -n2 | head -n1 | ahclip
 }
 
