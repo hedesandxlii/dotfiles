@@ -142,6 +142,20 @@ rename-symbol () {
   echo "\"$2\""
 }
 
+# applies diff of 'source' file between 'git refs' to 'destination file'
+#
+# $1 source file
+# $2 destination file
+# $3 git refs (optional)
+apply-diff () {
+  local tmp_file="/tmp/ah-get-diff.patch"
+  local src="$1"
+  local dst="$2"
+  local git_refs="${3:-HEAD^}"
+
+  git diff "$git_refs" -- "$src" > "$tmp_file"
+  patch --merge=diff3 "$dst" "$tmp_file"
+}
 
 # handy clipboard copy.
 #
