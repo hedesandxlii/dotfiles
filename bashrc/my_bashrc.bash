@@ -189,6 +189,9 @@ v () {
 
   # shellcheck disable=SC1090
   source "$(echo-venvs | fzf --select-1 --exit-0)"
+
+  echo ">>> Installing python-lsp-server, pylsp-mypy & pylsp-rope"
+  uv pip install python-lsp-server pylsp-mypy pylsp-rope
 }
 
 # $1 is a git ref (default HEAD)
