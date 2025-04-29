@@ -37,7 +37,7 @@ tabpad = " " # Tabs will look like "→   " (depending on tab width)
 enable = true
 
 [keys.insert]
-C-space = "completion"
+C-A-i = "completion"
 
 [keys.select]
 Y = ":yank-join"
