@@ -1,1 +1,4 @@
 .deps
+bin/hx
+.crates.toml
+.crates2.json

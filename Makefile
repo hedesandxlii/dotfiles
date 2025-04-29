@@ -1,29 +1,42 @@
+TMUX_PATH := /usr/bin/tmux
+BIN_DIR := ./bin
+
+
+STOW_PATH := /usr/bin/stow
 STOW ?= stow -v -t ${HOME}
-TARGETS := helix bashrc tmux scripts
 
-$(wildcard *): apt-stow  # Makes everything dependant on stow
-
-.PHONY: $(TARGETS)
+.PHONY: bashrc
 
 all: $(TARGETS)
 
-apt-%:
-	sudo apt install -y $*
+bashrc:
+	echo '#### Load dotfiles'                                 >> ~/.bashrc
+	echo "my_bashrc_path=$(realpath ./bashrc/my_bashrc.bash)" >> ~/.bashrc
+	echo "dotfiles_bin_path=$(realpath $(BIN_DIR))"           >> ~/.bashrc
+	echo '[ -f "$$my_bashrc_path" ] \'                        >> ~/.bashrc
+	echo '    && source "$$my_bashrc_path" \'                 >> ~/.bashrc
+	echo '    || echo No file "$$my_bashrc_path"'             >> ~/.bashrc
+	echo '[ -d "$$dotfiles_bin_path" ] \'                     >> ~/.bashrc
+	echo '    && export PATH="$$dotfiles_bin_path:$$PATH" \'  >> ~/.bashrc
+	echo '    || echo No directory "$$dotfiles_bin_path"'     >> ~/.bashrc
+	echo '#### Load dotfiles'                                 >> ~/.bashrc
 
-scripts:
-	$(STOW) scripts
+# TODO: cargo dependency
+$(BIN_DIR)/hx: $(STOW_PATH) .git/modules/submodules/helix/refs/heads/master
+	cargo install \
+		--path submodules/helix/helix-term \
+		--locked \
+		--root ./ \
+		--bin hx \
+		--force
 
-bashrc: apt-fzf
-	echo "[ -f $(realpath bashrc/my_bashrc.bash) ] \\" >> ~/.bashrc
-	echo "    && source $(realpath bashrc/my_bashrc.bash) \\" >> ~/.bashrc
-	echo "    || echo No file $(realpath bashrc/my_bashrc.bash)" >> ~/.bashrc
-
-helix:
-	cargo install --path submodules/helix/helix-term --locked
 	$(STOW) helix
 
-tmux: apt-tmux apt-fzf
+# TODO: fzf git dependency?? (or mby it's fixed in 25.04?)
+tmux: apt-tmux apt-fzf $(STOW_PATH)
 	$(STOW) tmux
 
-clean:
-	$(STOW) --delete $(TARGETS)
+$(STOW_PATH): apt-stow
+
+apt-%:
+	sudo apt install -y $*
