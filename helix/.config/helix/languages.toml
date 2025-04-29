@@ -74,7 +74,7 @@ note = "info"
 command = "simple-completion-language-server"
 
 [language-server.scls.config]
-max_completion_items = 100           # set max completion results len for each group: words, snippets, unicode-input
+max_completion_items = 5             # set max completion results len for each group: words, snippets, unicode-input
 feature_words = true                 # enable completion by word
 feature_snippets = true              # enable snippets
 snippets_first = true                # completions will return before snippets by default
