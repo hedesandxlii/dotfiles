@@ -8,7 +8,6 @@ mby_source_file ()  {
 }
 
 mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
-mby_source_file "$HOME/.bash_hostspecific"      # hostspecific aliases and env.vars
 
 mby_prepend_path "$HOME/.local/bin"
 mby_prepend_path "$HOME/.cargo/bin"       # cargo (rust)
@@ -69,6 +68,7 @@ shopt -s histappend
 export PS1='\[\e[35m\]\w\[\e[0m\] [$?] \\$ '
 
 eval "$(fzf --bash)"
+mby_source_file "$HOME/.bash_hostspecific" # hostspecific aliases and env.vars
 
 ## Utility functions
 
