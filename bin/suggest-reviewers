@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# $1 is a git ref (default HEAD)
+# $2 is an file filter command (default "cat", i.e. ignore nothing)
+
+commit=${1:-HEAD}
+filter_cmd=${2:-"cat"}
+
+echo "Suggested reviewers for $(git log "$commit" --oneline -n1)"
+file-owner "$commit" "$(git diff "$commit"~1 "$commit" --name-only | $filter_cmd )"

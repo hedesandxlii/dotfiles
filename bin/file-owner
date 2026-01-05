@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+# $1 is a commit, the rest are files
+
+commit="$1"
+
+pyscript="
+import collections
+c = collections.Counter()
+try:
+  while True:
+      c.update([input()])
+except EOFError:
+  print('LOCs | Author')
+  print('-----|' + '-' * 30)
+  for auth, count in c.most_common():
+    print(f'{count: >4} | {auth}')"
+
+shift
+
+{
+  for file in $@
+  do
+    git blame --line-porcelain "$commit" -- "$file" | sed '/author /!d;s/author //g'
+  done
+} | python3 -c "$pyscript"
