@@ -8,7 +8,6 @@ mby_source_file ()  {
 }
 
 mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
-mby_source_file "/usr/share/git/git-prompt.sh"  # git PS1
 mby_source_file "$HOME/.bash_hostspecific"      # hostspecific aliases and env.vars
 
 mby_prepend_path "$HOME/.local/bin"
@@ -66,44 +65,8 @@ export HISTFILESIZE=$HISTSIZE
 shopt -s histappend
 # export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
-# sets prompt (t.y.: https://stackoverflow.com/a/30963255)
-export GIT_PS1_SHOWCOLORHINTS=1
-export GIT_PS1_SHOWDIRTYSTATE=1
-
-txt_reset="$(tput sgr0)"
-txt_bold="$(tput bold)"
-txt_standout="$(tput smso)"
-txt_dim="$(tput dim)"
-txt_uline_start="$(tput smul)"
-txt_uline_end="$(tput rmul)"
-txt_red="$(tput setaf 1)"
-txt_purple="$(tput setaf 5)"
-export __TXT_RESET="$txt_reset"
-export __TXT_BOLD="$txt_bold"
-export __TXT_STANDOUT="$txt_standout"
-export __TXT_DIM="$txt_dim"
-export __TXT_ULINE_START="$txt_uline_start"
-export __TXT_ULINE_END="$txt_uline_end"
-export __TXT_RED="$txt_red"
-export __TXT_PURPLE="$txt_purple"
-
-get_ps1()
-{
-  # shellcheck disable=SC2016
-  local exit_code='$(ec=$?; [ "$ec" -eq "0" ] && echo $ec || echo ${__TXT_RED}${__TXT_BOLD}$ec${__TXT_RESET})'
-
-  local current_wd="${__TXT_PURPLE}\w${__TXT_RESET}"
-
-  # git branch
-  # shellcheck disable=SC2016
-  local git_head='$(__git_ps1 "%s")'
-  local commit_title="${__TXT_DIM}\$(git log -n1 --format=\"format:%s\" 2>/dev/null | cut -c1-50)${__TXT_RESET}"
-
-  # good old prompt, $ for user, # for root
-  echo -e "$current_wd [$exit_code] [ $git_head | $commit_title ]\n\\$ "
-}
-ps1=$(get_ps1)
-export PS1="$ps1"
+# Generated with https://bash-prompt-generator.org/
+export PS1='\[\e[35m\]\w\[\e[0m\] [$?] \\$ '
 
 eval "$(fzf --bash)"
 
