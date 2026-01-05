@@ -147,24 +147,28 @@ create-venv () {
 }
 echo-venvs () { find . -mindepth 3 -maxdepth 3 -name activate | grep venv; }
 
+install-python-lsps () {
+  installer="${1:-uv}"
+  case $installer in
+    "uv")
+      uv pip install python-lsp-server pylsp-mypy pylsp-rope;;
+    "pip")
+      pip install python-lsp-server pylsp-mypy pylsp-rope;;
+    *)
+      echo "Unknown installer $installer"
+      exit 1
+      ;;
+  esac
+}
+
 v () {
   [ -z "$(echo-venvs)" ] && create-venv "$1"
 
   # shellcheck disable=SC1090
   source "$(echo-venvs | fzf --select-1 --exit-0)"
 
-  echo ">>> Installing python-lsp-server, pylsp-mypy & pylsp-rope"
-  uv pip install python-lsp-server pylsp-mypy pylsp-rope
-}
-
-# $1 is a git ref (default HEAD)
-# $2 is an file filter command (default "cat", i.e. ignore nothing)
-suggest-reviewers () {
-  commit=${1:-HEAD}
-  filter_cmd=${2:-"cat"}
-
-  echo "Suggested reviewers for $(git log "$commit" --oneline -n1)"
-  file-owner "$commit" "$(git diff "$commit"~1 "$commit" --name-only | $filter_cmd )"
+  echo ">>> Installing python-lsp-server, pylsp-mypy, pylsp-rope"
+  install-python-lsps
 }
 
 cdp () {
