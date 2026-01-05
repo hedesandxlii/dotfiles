@@ -9,11 +9,10 @@ injection-regex = "c"
 file-types = ["c", "h"]
 comment-token = "//"
 block-comment-tokens = { start = "/*", end = "*/" }
-formatter = { command = "clang-format" }
 auto-format = true
 language-servers = [
   { name = "clangd" },
-  { name = "scls" },
+  # { name = "scls" },
 ]
 indent = { tab-width = 4, unit = "\t" }
 
@@ -25,8 +24,8 @@ language-servers = [
   { name = "ruff" },
   # { name = "jedi" },
   { name = "pylsp" },
-  { name = "scls" },
-  { name = "whitespace-lsp" },
+  # { name = "scls" },
+  # { name = "whitespace-lsp" },
 ]
 
 [[language]]

@@ -22,7 +22,7 @@ bashrc:
 	echo '#### Load dotfiles'                                 >> ~/.bashrc
 
 # TODO: cargo dependency
-$(BIN_DIR)/hx: $(STOW_PATH) .git/modules/submodules/helix/refs/heads/master
+$(BIN_DIR)/hx: $(STOW_PATH) .git/modules/submodules/helix/HEAD
 	cargo install \
 		--path submodules/helix/helix-term \
 		--locked \
