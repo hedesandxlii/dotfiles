@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 import pathlib
 
-ns = {}
 
-try:
-    (_, context_file_path) = sys.argv
-except ValueError:
-    pass
-else:
-    content = pathlib.Path(context_file_path).read_text()
-    try:
-        exec(content, ns)
-    except NameError as ne:
-        ne.add_note(f"Following symbols are available: {', '.join(ns)}")
-        raise ne
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("context_file_path", nargs="*")
+
+    args = parser.parse_args()
+
+    if len(args.context_file_path) > 1:
+        print("Only support 0 or 1 context files at the moment")
+        exit(1)
+
+    ns = {}
+    if len(args.context_file_path) == 1:
+        (context_file_path,) = args.context_file_path
+        context_file_path = (
+            None if context_file_path is None else pathlib.Path(context_file_path)
+        )
+        context = None if context_file_path is None else context_file_path.read_text()
+
+        try:
+            exec(context, ns)
+        except NameError as ne:
+            ne.add_note(f"Following symbols are available: {', '.join(ns)}")
+            raise ne
+
+    print(eval(sys.stdin.read(), ns))
 
 
-print(eval(sys.stdin.read(), ns))
+if __name__ == "__main__":
+    main()
