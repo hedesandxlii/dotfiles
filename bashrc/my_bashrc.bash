@@ -12,7 +12,6 @@ mby_source_file "/etc/skel/.bashrc"             # ubuntu bash defaults
 mby_prepend_path "$HOME/.local/bin"
 mby_prepend_path "$HOME/.cargo/bin"       # cargo (rust)
 mby_prepend_path "$HOME/.npm-global/bin"  # "npm -g" bins
-mby_prepend_path "$HOME/go/bin"           # go packages
 mby_prepend_path "$HOME/.local/bin/flutter/bin"
 
 get_helix_runtime_value () {
