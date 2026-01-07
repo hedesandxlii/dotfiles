@@ -4,85 +4,11 @@
 ########################### language configurations ############################
 [[language]]
 name = "c"
-scope = "source.c"
-injection-regex = "c"
 file-types = ["c", "h"]
-comment-token = "//"
-block-comment-tokens = { start = "/*", end = "*/" }
 auto-format = true
-language-servers = [
-  { name = "clangd" },
-  # { name = "scls" },
-]
 indent = { tab-width = 4, unit = "\t" }
 
 [[language]]
 name = "python"
 auto-format = true
-language-servers = [
-  # { name = "dls", only-features = [ "diagnostics" ] },
-  { name = "ruff" },
-  # { name = "jedi" },
-  { name = "pylsp" },
-  # { name = "scls" },
-  # { name = "whitespace-lsp" },
-]
-
-[[language]]
-name = "rst"
-scope = "source.rst"
-comment-token = ".."
-indent = { tab-width = 3, unit = "   " }
-file-types = ["rst"]
-
-[[language]]
-name = "markdown"
-scope = "source.md"
-indent = {tab-width = 4, unit = "    " }
-
-######################## language server configurations ########################
-
-[language-server.whitespace-lsp]
-command = "whitespace-lsp"
-
-[language-server.dls]
-command = "diagnostic-languageserver"
-args = ["--stdio"]
-
-[language-server.dls.config.filetypes]
-python = ["mypy"]
-
-[language-server.dls.config.linters.mypy]
-command = "mypy"
-args = ["%filename"]
-rootPatterns = ["pyproject.toml", ".git"]
-sourceName = "mypy"
-formatLines = 1
-formatPattern = [
-  "^([^:]+):(\\d+): ([^:]+): (.*)$",
-  { sourceName = 1, line = 2, security = 3, message = [4], sourceNameFilter = true }
-]
-
-[language-server.dls.config.linters.mypy.securities]
-error = "error"
-warning = "warning"
-note = "info"
-
-
-[language-server.scls]
-command = "simple-completion-language-server"
-
-[language-server.scls.config]
-max_completion_items = 5             # set max completion results len for each group: words, snippets, unicode-input
-feature_words = true                 # enable completion by word
-feature_snippets = true              # enable snippets
-snippets_first = true                # completions will return before snippets by default
-snippets_inline_by_word_tail = false # suggest snippets by WORD tail, for example text `xsq|` become `x^2|` when snippet `sq` has body `^2`
-feature_unicode_input = false        # enable "unicode input"
-feature_paths = false                # enable path completion
-feature_citations = false            # enable citation completion (only on `citation` feature enabled)
-
-# write logs to /tmp/completion.log
-[language-server.scls.environment]
-RUST_LOG = "info,simple-completion-language-server=info"
-LOG_FILE = "/tmp/completion.log"
+language-servers = ["ruff", "pylsp"]
