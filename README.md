@@ -7,9 +7,3 @@ This is a collection of my dotfiles, mainly being for helix, tmux & bash
 ```sh
 $ make
 ```
-
-# Setup
-
-```sh
-$ git config --local core.hooksPath .githooks/
-```
