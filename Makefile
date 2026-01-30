@@ -20,6 +20,9 @@ bashrc: git-fzf
 	@echo '#### Load dotfiles'                                 >> ~/.bashrc
 	@echo '[INFO] Appended load-dotfile block to .bashrc'
 
+git: apt/git
+	$(STOW_CMD) git
+
 helix: _cargo_from_apt_rustup _submodules
 	cargo install \
 		--path submodules/helix/helix-term \

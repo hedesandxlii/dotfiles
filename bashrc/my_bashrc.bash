@@ -33,28 +33,10 @@ alias p="python3"
 alias pm="python3 -m"
 alias tmux="tmux -2"
 
-# git aliases
-git config --global alias.co checkout
-git config --global alias.ci commit
-git config --global alias.st 'status --short --branch'
-git config --global alias.br branch
-git config --global alias.cp cherry-pick
-git config --global alias.rb rebase
-git config --global alias.rbc 'rebase --continue'
-git config --global alias.d diff
-git config --global alias.ds 'diff --staged'
-git config --global alias.unstage 'reset HEAD --'
-git config --global alias.unmodify 'checkout --'
-git config --global alias.lg 'log --oneline -n10'
-git config --global alias.lgg 'log --graph --oneline --branches -n 20 HEAD'
-git config --global alias.detach 'checkout --detach'
-git config --global alias.cleen 'clean -df'
-git config --global alias.ups 'commit -a --amend --no-edit'
-git config --global alias.ui  '!lazygit || echo "could not launch lazygit :("'
+# "Dynamic" git global configs
+git config --global include.path      $HOME/.config/git/static_config
+git config --global core.excludesfile $HOME/.config/git/global_gitignore
 
-# gerrit pushing
-git config --global alias.magic '!git push origin HEAD:refs/for/master'
-git config --global alias.blackmagic 'push --no-verify origin HEAD:refs/for/master'
 
 # history sharing (t.y.: https://unix.stackexchange.com/a/48113)
 export HISTCONTROL=ignoredups:erasedups

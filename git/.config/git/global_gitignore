@@ -1,0 +1,14 @@
+.cache/
+.helix/
+misc/
+**/compile_commands.json
+**/*auth*
+stash
+.clangd/*
+.python-version
+venv*/
+#*#
+.twf.yaml
+NOTES.md
+.ignore
+__marimo__

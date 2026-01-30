@@ -1,0 +1,41 @@
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status --short --branch
+	unstage = reset HEAD --
+	unmodify = checkout --
+	lg = log --oneline -n10
+	magic = !git push origin HEAD:refs/for/master
+	magicv4 = push origin HEAD:refs/for/v4
+	lgg = log --graph --oneline --branches -n 20 HEAD
+	cp = cherry-pick
+	rb = rebase
+	rbi = rebase -i
+	rbc = rebase --continue
+	detach = checkout --detach
+	cleen = clean -df
+	ch = checkout
+	ups = commit -a --amend --no-edit
+	d = diff
+	ds = diff --staged
+	uncrustify = !./scripts/utils/git-uncrustify
+	ui = !lazygit || echo "could not launch lazygit :("
+	blackmagic = push --no-verify origin HEAD:refs/for/master
+[credential]
+	helper = store
+[user]
+	email = andre.hedesand@gmail.com
+	name = André Hedesand
+
+[merge]
+	tool = kdiff3
+[mergetool "meld"]
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[pull]
+	rebase = true
