@@ -36,6 +36,7 @@ alias tmux="tmux -2"
 # "Dynamic" git global configs
 git config --global include.path      $HOME/.config/git/static_config
 git config --global core.excludesfile $HOME/.config/git/global_gitignore
+git config --global commit.template   $HOME/.config/git/commit_template
 
 
 # history sharing (t.y.: https://unix.stackexchange.com/a/48113)
