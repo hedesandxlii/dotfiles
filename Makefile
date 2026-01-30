@@ -38,6 +38,7 @@ git-fzf: _submodules
 
 lazygit: apt/golang-go
 	GOPATH=$(PWD) go install github.com/jesseduffield/lazygit@latest
+	sudo rm -rf ./pkg
 
 _cargo_from_apt_rustup: apt/rustup
 	rustup install stable
