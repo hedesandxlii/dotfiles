@@ -11,4 +11,9 @@ indent = { tab-width = 4, unit = "\t" }
 [[language]]
 name = "python"
 auto-format = true
-language-servers = ["ruff", "pylsp"]
+language-servers = ["ruff", "pylsp", "codebook"]
+
+######################## language server configurations ########################
+[language-server.codebook]
+command = "codebook-lsp"
+args = ["serve"]

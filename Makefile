@@ -2,7 +2,7 @@ STOW_CMD ?= stow -v -t ${HOME}
 
 BIN_DIR := ./bin
 
-TARGETS := bashrc helix tmux
+TARGETS := bashrc helix tmux codebook
 
 .PHONY: $(TARGETS) _cargo_from_apt_rustup _submodules
 all: $(TARGETS)
@@ -42,6 +42,9 @@ git-fzf: _submodules
 lazygit: apt/golang-go
 	GOPATH=$(PWD) go install github.com/jesseduffield/lazygit@latest
 	sudo rm -rf ./pkg
+
+codebook: _cargo_from_apt_rustup
+	cargo install codebook-lsp
 
 _cargo_from_apt_rustup: apt/rustup
 	rustup install stable
